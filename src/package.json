@@ -1,0 +1,13 @@
+{
+  "name": "fonbet_live_watcher",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "mocha *.test.js"
+  },
+  "dependencies": {
+    "colors": "^1.4.0"
+  },
+  "devDependencies": {
+    "mocha": "^6.2.2"
+  }
+}

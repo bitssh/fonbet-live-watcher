@@ -23,11 +23,11 @@ exports.liveWatcher = {
         return this.useDummyUrl ? 100 : 2000;
     },
 
-    watchScoreSeqCount: 3,
-    watchScoreSeq: ['1:1', '2:2', '0:2', '0:1', '1:2', '2:3', '1:3', '2:4', '3:4', '3:5', '4:5'],
+    watchScoreSeqCount: 2,
+    watchScoreSeq: ['1:1', '2:2', '0:2', '0:3', '0:4'],
 
     watchNoGoalsCount: 3,
-    watchNoGoalsFromSec: 280,
+    watchNoGoalsFromSec: 270,
 
     async fetchUpdates() {
         let url = (() => {
@@ -70,8 +70,10 @@ exports.liveWatcher = {
         for (let event of events) {
             let cachedGame = this.cachedGames.get(event.id);
             if (cachedGame === undefined) {
-                cachedGame = {};
-
+                cachedGame = {
+                    scores: [],
+                };
+                cachedGame.score = () => cachedGame.scores[cachedGame.scores.length - 1];
 
                 this.cachedGames.set(event.id, cachedGame);
             }
@@ -84,9 +86,9 @@ exports.liveWatcher = {
                 const score = miscs.score1 <= miscs.score2
                     ? `${miscs.score1}:${miscs.score2}`
                     : `${miscs.score2}:${miscs.score1}`;
-                if (cachedGame.score !== score) {
+                if (cachedGame.score() !== score) {
                     cachedGame.miscs = miscs;
-                    cachedGame.score = score;
+                    cachedGame.scores.push(score);
                     cachedGame.timerSeconds = miscs.timerSeconds;
                     result.add(cachedGame);
                 }
@@ -102,11 +104,11 @@ exports.liveWatcher = {
             return;
 
         for (let game of fetchedGames) {
-            if (!game.score) {
+            if (!game.score()) {
                 console.error(`score is null for game ${game.event.id}`.red);
                 return;
             }
-            game.new = game.score === '0:0';
+            game.new = game.score() === '0:0';
             game.now = new Date().toLocaleString();
             game.timerUpdate = !game.miscs.timerUpdateTimestamp
                 ? ''
@@ -129,7 +131,7 @@ exports.liveWatcher = {
         }
     },
     appendToFile(game, filename) {
-        let csvRow = [game.now, game.event.name.replace('Матч', 'Match'), "'" + game.score, game.timerSeconds];
+        let csvRow = [game.now, game.event.name.replace('Матч', 'Match'), "'" + game.score(), game.timerSeconds];
         try {
             const fd = fs.openSync(filename, 'a');
             try {
@@ -158,7 +160,7 @@ exports.liveWatcher = {
         // TODO show seqStr, clnStr only if they are yellow
 
         let logStr = `${game.now} ${indent}S${seqStr} C${clnStr} `
-            + `${game.event.id}  ${game.event.name} <${game.score}> ${game.timerSeconds} ${game.timerUpdate} `;
+            + `${game.event.id}  ${game.event.name} <${game.score()}> ${game.timerSeconds} ${game.timerUpdate} `;
         console.log(game.new ? logStr.grey: logStr );
 
     },
@@ -214,14 +216,18 @@ exports.liveWatcher = {
     getSameScoreLastGamesCount(games) {
         let count = 1;
         let score;
-        for (let i = games.length - 1; i >= 1; i -= 1) {
-            // score у соседних игр должен совпадать и быть равным предопределённым значениям watchScoreSeq
-            score = games[i].score;
-            if (score !== games[i - 1].score)
-                break;
-            if (this.watchScoreSeq.indexOf(score) === -1)
-                break;
-            count += 1;
+        if (games[games.length - 1].score) {
+            score = games[games.length - 1].score();
+            if (this.watchScoreSeq.indexOf(score) !== -1) {
+                for (let i = games.length - 2; i >= 0; i -= 1) {
+                    if (!games[i].score)
+                        break;
+                    if (games[i].scores.indexOf(score) === -1) {
+                        break;
+                    }
+                    count += 1;
+                }
+            }
         }
         return {count, score};
     },

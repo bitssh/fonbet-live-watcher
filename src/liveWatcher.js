@@ -1,6 +1,6 @@
 "use strict";
-
 // https://www.fonbet.ru/#!/live/rocket-league
+const config = require("./config.js");
 const notifier = require('./notifier.js');
 const fetch = require('node-fetch');
 const fs = require('fs');
@@ -17,24 +17,15 @@ exports.liveWatcher = {
     games: new Map,
     sportsIDs: new Set,
     cachedGames: new Map(),
-    cachedGamesSize: 30,
-    useDummyUrl: false,
-    fileWritingEnabled: true,
     getFetchTimeout() {
-        return this.useDummyUrl ? 100 : 2000;
+        return config.useDummyUrl ? 100 : 2000;
     },
-
-    watchScoreSeqCount: 3,
-    watchScoreSeq: ['1:1', '2:2', '0:2', '0:3', '0:4'],
-
-    watchNoGoalsCount: 3,
-    watchNoGoalsFromSec: 270,
     lastCSVLine: [null, null],
 
     async fetchUpdates() {
         let url = (() => {
             let result;
-            if (this.useDummyUrl) {
+            if (config.useDummyUrl) {
                 result = this.lastPacketVersion
                     ? `./../response-test/updatesFromVersion-${this.lastPacketVersion}.json`
                     : './../response-test/currentLine.json';
@@ -48,7 +39,7 @@ exports.liveWatcher = {
         })();
 
         let responseData;
-        if (this.useDummyUrl) {
+        if (config.useDummyUrl) {
             responseData = require(url);
         } else {
             let response = await fetch(url);
@@ -133,7 +124,7 @@ exports.liveWatcher = {
             game.date = new Date(game.event.startTime * 1000).toLocaleDateString();
             game.isFootball = game.event.sportId === rlFootballSportID;
 
-            if (this.fileWritingEnabled) {
+            if (config.fileWritingEnabled) {
                 this.appendToFile(game);
             }
 
@@ -176,8 +167,8 @@ exports.liveWatcher = {
 
         let seqStr = this.getSameScoreLastGamesCount(games).count;
         let clnStr = this.getNoGoalsLastGamesCount(games);
-        seqStr =  + seqStr >= this.watchScoreSeqCount - 1 ? String('S' + seqStr).yellow : '  ';
-        clnStr =  + clnStr >= this.watchNoGoalsCount - 1 ? String('C' + clnStr).yellow : '  ';
+        seqStr =  + seqStr >= config.watchScoreSeqCount - 1 ? String('S' + seqStr).yellow : '  ';
+        clnStr =  + clnStr >= config.watchNoGoalsCount - 1 ? String('C' + clnStr).yellow : '  ';
 
         let logStr = `${game.now} ${indent}${seqStr} ${clnStr} `
             + `${game.event.id}  ${game.event.name} <${game.score()}> ${game.timerSeconds} ${game.timerUpdate} `;
@@ -189,7 +180,7 @@ exports.liveWatcher = {
     },
 
     notifyAboutNoGoals (sportName, noGoalsCount) {
-        this.sendNotification(`${sportName} - нет голов в ${noGoalsCount} матчах с ${this.watchNoGoalsFromSec} секунды`);
+        this.sendNotification(`${sportName} - нет голов в ${noGoalsCount} матчах с ${config.watchNoGoalsFromSec} секунды`);
     },
 
     sendNotification(text) {
@@ -206,13 +197,13 @@ exports.liveWatcher = {
 
         const sameScores = this.getSameScoreLastGamesCount(games);
 
-        if (sameScores.count >= this.watchScoreSeqCount)
+        if (sameScores.count >= config.watchScoreSeqCount)
             this.notifyAboutScoreSeq(sportName, sameScores);
 
         // проверяем является ли текущий матч новым
         if (game.new && game === games[games.length - 1]) {
             const noGoals = this.getNoGoalsLastGamesCount(games);
-            if (noGoals >= this.watchNoGoalsCount)
+            if (noGoals >= config.watchNoGoalsCount)
                 this.notifyAboutNoGoals(sportName, noGoals);
         }
 
@@ -238,7 +229,7 @@ exports.liveWatcher = {
         let score;
         if (games[games.length - 1].score) {
             score = games[games.length - 1].score();
-            if (this.watchScoreSeq.indexOf(score) !== -1) {
+            if (config.watchScoreSeq.indexOf(score) !== -1) {
                 for (let i = games.length - 2; i >= 0; i -= 1) {
                     if (!games[i].score)
                         break;
@@ -256,7 +247,7 @@ exports.liveWatcher = {
         let count = 0;
         // не учитываем текущую игру
         for (let i = games.length - 2; i >= 0; i -= 1) {
-            if (!games[i].timerSeconds || games[i].timerSeconds >= this.watchNoGoalsFromSec)
+            if (!games[i].timerSeconds || games[i].timerSeconds >= config.watchNoGoalsFromSec)
                 break;
             count += 1;
         }

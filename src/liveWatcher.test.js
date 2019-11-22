@@ -1,5 +1,6 @@
 const liveWatcher = require("./liveWatcher.js").liveWatcher;
 const assert = require("assert");
+const config = require("./config.js");
 require("colors");
 const cachedGames = liveWatcher.cachedGames;
 
@@ -21,8 +22,8 @@ class Game {
 }
 
 it("граббинг тестовых данных", function(){
-    liveWatcher.fileWritingEnabled = false;
-    liveWatcher.useDummyUrl = true;
+    config.fileWritingEnabled = false;
+    config.useDummyUrl = true;
     liveWatcher.grabUpdates();
     liveWatcher.grabUpdates();
     liveWatcher.grabUpdates();
@@ -47,7 +48,7 @@ it("удаление первой половины игр", function(){
 
 describe("подсчёт количества последних игр с одинаковым .score" , function(){
     let games = [];
-    liveWatcher.watchScoreSeq = [];
+    config.watchScoreSeq = [];
     let game1 = new Game (['0:0', '0:1', '0:2']);
     games.push(game1);
 
@@ -61,7 +62,7 @@ describe("подсчёт количества последних игр с од�
     });
 
     it("Задали значения watchScoreSeq, результат = 2", function () {
-        liveWatcher.watchScoreSeq = ['5:5', '0:0', '6:6'];
+        config.watchScoreSeq = ['5:5', '0:0', '6:6'];
         assert.deepEqual(liveWatcher.getSameScoreLastGamesCount(games), {count: 2, score: '0:0'});
     });
 
@@ -81,8 +82,8 @@ describe("подсчёт количества последних игр с од�
 describe("getNoGoalsLastGamesCount", function() {
 
     let games = [];
-    liveWatcher.watchNoGoalsCount = 3;
-    liveWatcher.watchNoGoalsFromSec = 270;
+    config.watchNoGoalsCount = 3;
+    config.watchNoGoalsFromSec = 270;
 
     it("нет игр - 0 игр без голов", function () {
         assert.equal(liveWatcher.getNoGoalsLastGamesCount(games), 0);
@@ -116,8 +117,8 @@ describe("getNoGoalsLastGamesCount", function() {
 
 describe("sendNotifications.notifyAboutNoGoals", function() {
     let notifications = [];
-    liveWatcher.watchNoGoalsCount = 3;
-    liveWatcher.watchNoGoalsFromSec = 270;
+    config.watchNoGoalsCount = 3;
+    config.watchNoGoalsFromSec = 270;
     liveWatcher.notifyAboutScoreSeq = () => {};
     liveWatcher.notifyAboutNoGoals = (sportName, noGoalsCount) => {notifications.push(noGoalsCount)};
     cachedGames.clear();
@@ -184,15 +185,15 @@ describe("sendNotifications.notifyAboutNoGoals", function() {
 describe("sendNotifications.notifyAboutScoreSeq", function() {
     cachedGames.clear();
 
-    liveWatcher.watchScoreSeqCount = 3;
+    config.watchScoreSeqCount = 3;
 
     const game = {scores: [ '4:4'], isFootball: true};
 
     it("3 серии и не задан массив очков", function () {
         cachedGames.clear();
         let notifications = [];
-        liveWatcher.watchScoreSeq = [];
-        liveWatcher.watchScoreSeqCount = 3;
+        config.watchScoreSeq = [];
+        config.watchScoreSeqCount = 3;
         liveWatcher.notifyAboutScoreSeq = (sportName, sameScores) => {notifications.push(sameScores)};
         liveWatcher.notifyAboutNoGoals = () => {};
 
@@ -210,10 +211,10 @@ describe("sendNotifications.notifyAboutScoreSeq", function() {
         liveWatcher.notifyAboutScoreSeq = (sportName, sameScores) => {notifications.push(sameScores)};
 
         let notifications = [];
-        liveWatcher.watchScoreSeq = ['4:4'];
+        config.watchScoreSeq = ['4:4'];
         liveWatcher.sendNotifications(game);
         assert.equal(notifications.length, 0);
-        liveWatcher.watchScoreSeq = ['4:4', '5:5', '6:6'];
+        config.watchScoreSeq = ['4:4', '5:5', '6:6'];
         liveWatcher.sendNotifications(game);
         assert.equal(notifications.length, 1);
         assert.deepEqual(notifications[0], {count: 3, score: '5:5'});

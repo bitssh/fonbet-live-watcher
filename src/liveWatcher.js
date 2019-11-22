@@ -4,6 +4,7 @@
 const notifier = require('./notifier.js');
 const fetch = require('node-fetch');
 const fs = require('fs');
+const getLastLine = require('./fileTools.js').getLastLine
 require('colors');
 
 const rlFootballSportID = 44955;
@@ -23,11 +24,12 @@ exports.liveWatcher = {
         return this.useDummyUrl ? 100 : 2000;
     },
 
-    watchScoreSeqCount: 2,
+    watchScoreSeqCount: 3,
     watchScoreSeq: ['1:1', '2:2', '0:2', '0:3', '0:4'],
 
     watchNoGoalsCount: 3,
     watchNoGoalsFromSec: 270,
+    lastCSVLine: [null, null],
 
     async fetchUpdates() {
         let url = (() => {
@@ -97,7 +99,22 @@ exports.liveWatcher = {
         }
         return result;
     },
+    initialize() {
+        for (let bool of [false, true]) {
+            getLastLine(this.getCSVFilename(bool), 1)
+                .then((lastLine) => {
+                    this.lastCSVLine[bool] = lastLine.split(';');
+                })
+                .catch((err) => {
+                    console.error(err)
+                })
+        }
 
+    },
+    getCSVFilename (football) {
+        const sportName = football ? 'football' : 'hockey';
+        return `./../csv/${sportName}.csv`;
+    },
     async grabUpdates() {
         let fetchedGames = await this.fetchUpdates();
         if (!fetchedGames || !fetchedGames.size)
@@ -114,11 +131,10 @@ exports.liveWatcher = {
                 ? ''
                 : new Date(game.miscs.timerUpdateTimestamp * 1000).toLocaleTimeString();
             game.date = new Date(game.event.startTime * 1000).toLocaleDateString();
-            game.isFootBall = game.event.sportId === rlFootballSportID;
+            game.isFootball = game.event.sportId === rlFootballSportID;
 
             if (this.fileWritingEnabled) {
-                const sportName = game.isFootBall ? 'football' : 'hockey';
-                this.appendToFile(game, `./../csv/${sportName}.csv`);
+                this.appendToFile(game);
             }
 
             this.appendToConsole(game);
@@ -130,36 +146,40 @@ exports.liveWatcher = {
             this.sendNotifications(game);
         }
     },
-    appendToFile(game, filename) {
+    appendToFile(game) {
         let csvRow = [game.now, game.event.name.replace('Матч', 'Match'), "'" + game.score(), game.timerSeconds];
-        try {
-            const fd = fs.openSync(filename, 'a');
+        let line = csvRow.join(';');
+        let lastLine = this.lastCSVLine[game.isFootball];
+        if (!lastLine || !(csvRow[1] === lastLine[1] && csvRow[2] === lastLine[2])) {
+            this.lastCSVLine[game.isFootball] = null;
             try {
-                fs.appendFileSync(fd, csvRow.join(';') + '\r\n');
-            } finally {
-                fs.closeSync(fd);
+                const filename = this.getCSVFilename(game.isFootball);
+                const fd = fs.openSync(filename, 'a');
+                try {
+                    fs.appendFileSync(fd, line + '\r\n');
+                } finally {
+                    fs.closeSync(fd);
+                }
+            } catch (err) {
+                console.error(err.red)
             }
-        } catch (err) {
-            console.error(err.red)
         }
 
     },
     appendToConsole(game) {
-        const games = this.getGames(game.isFootBall);
+        const games = this.getGames(game.isFootball);
 
 
         if (!game.timerSeconds)
             game.timerSeconds = '   ';
-        const indent = game.isFootBall ? '            ' : '';
+        const indent = game.isFootball ? '            ' : '';
 
         let seqStr = this.getSameScoreLastGamesCount(games).count;
         let clnStr = this.getNoGoalsLastGamesCount(games);
-        seqStr = seqStr >= this.watchScoreSeqCount - 1 ? String(seqStr).yellow : seqStr;
-        clnStr = clnStr >= this.watchNoGoalsCount - 1 ? String(clnStr).yellow : clnStr;
+        seqStr =  + seqStr >= this.watchScoreSeqCount - 1 ? String('S' + seqStr).yellow : '  ';
+        clnStr =  + clnStr >= this.watchNoGoalsCount - 1 ? String('C' + clnStr).yellow : '  ';
 
-        // TODO show seqStr, clnStr only if they are yellow
-
-        let logStr = `${game.now} ${indent}S${seqStr} C${clnStr} `
+        let logStr = `${game.now} ${indent}${seqStr} ${clnStr} `
             + `${game.event.id}  ${game.event.name} <${game.score()}> ${game.timerSeconds} ${game.timerUpdate} `;
         console.log(game.new ? logStr.grey: logStr );
 
@@ -181,8 +201,8 @@ exports.liveWatcher = {
     },
 
     sendNotifications(game) {
-        const games = this.getGames(game.isFootBall);
-        const sportName = game.isFootBall ? 'Футбол' : 'Хоккей';
+        const games = this.getGames(game.isFootball);
+        const sportName = game.isFootball ? 'Футбол' : 'Хоккей';
 
         const sameScores = this.getSameScoreLastGamesCount(games);
 
@@ -197,8 +217,8 @@ exports.liveWatcher = {
         }
 
     },
-    getGames(footBall) {
-        return Array.from(this.cachedGames.values()).filter((item) => item.isFootBall === footBall);
+    getGames(football) {
+        return Array.from(this.cachedGames.values()).filter((item) => item.isFootball === football);
     },
 
     shrinkCache() {

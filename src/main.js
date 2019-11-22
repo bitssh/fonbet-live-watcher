@@ -1,6 +1,7 @@
 const liveWatcher = require('./liveWatcher.js').liveWatcher;
 
 console.log('initialized');
+liveWatcher.initialize();
 liveWatcher.grabUpdates();
 
 const timerId = setInterval(() => {

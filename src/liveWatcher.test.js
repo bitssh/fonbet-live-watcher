@@ -4,7 +4,7 @@ require("colors");
 const cachedGames = liveWatcher.cachedGames;
 
 function pushGame(game, footBall = true) {
-    game.isFootBall = footBall;
+    game.isFootball = footBall;
     game.score =  () => game.scores[game.scores.length - 1];
     cachedGames.set(cachedGames.size, game);
 }
@@ -121,9 +121,9 @@ describe("sendNotifications.notifyAboutNoGoals", function() {
     liveWatcher.notifyAboutScoreSeq = () => {};
     liveWatcher.notifyAboutNoGoals = (sportName, noGoalsCount) => {notifications.push(noGoalsCount)};
     cachedGames.clear();
-    const noGoalGame = {isFootBall: true, timerSeconds: 1};
-    const goalGame = {isFootBall: true, timerSeconds: 270};
-    const newGame = {isFootBall: true, scores: ['0:0'], new: true};
+    const noGoalGame = {isFootball: true, timerSeconds: 1};
+    const goalGame = {isFootball: true, timerSeconds: 270};
+    const newGame = {isFootball: true, scores: ['0:0'], new: true};
 
     it("2 матча без голов - без оповещений", function () {
         cachedGames.clear();
@@ -186,7 +186,7 @@ describe("sendNotifications.notifyAboutScoreSeq", function() {
 
     liveWatcher.watchScoreSeqCount = 3;
 
-    const game = {scores: [ '4:4'], isFootBall: true};
+    const game = {scores: [ '4:4'], isFootball: true};
 
     it("3 серии и не задан массив очков", function () {
         cachedGames.clear();
@@ -243,8 +243,8 @@ describe("sendNotifications.notifyAboutScoreSeq", function() {
     it("изменили 2 последних матча на футбол - оборвали серию", function () {
         liveWatcher.notifyAboutScoreSeq = (sportName, sameScores) => {notifications.push(sameScores)};
         let notifications = [];
-        cachedGames.set(6, {scores: [ '4:4'], isFootBall: true});
-        cachedGames.set(7, {scores: [ '4:4'], isFootBall: true});
+        cachedGames.set(6, {scores: [ '4:4'], isFootball: true});
+        cachedGames.set(7, {scores: [ '4:4'], isFootball: true});
         liveWatcher.sendNotifications(game);
         assert.equal(notifications.length, 0);
 

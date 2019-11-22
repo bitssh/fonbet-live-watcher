@@ -1,4 +1,5 @@
-const liveWatcher = require("./liveWatcher.js").liveWatcher;
+const liveWatcherModule = require("./liveWatcher.js");
+const liveWatcher = liveWatcherModule.liveWatcher;
 const assert = require("assert");
 const config = require("./config.js").common;
 require("colors");
@@ -27,7 +28,7 @@ it("граббинг тестовых данных", function(){
     liveWatcher.grabUpdates();
     liveWatcher.grabUpdates();
     liveWatcher.grabUpdates();
-    assert.equal(cachedGames.get(16156082).score(), '0:3');
+    assert.equal(cachedGames.get(16156082).score(), '3:0');
     assert.equal(cachedGames.get(16156082).miscs.timerSeconds, 129);
 });
 
@@ -45,6 +46,13 @@ it("удаление первой половины игр", function(){
     assert.equal(cachedGames.keys().next().value, 5);
 });
 
+it("проверяет вхождение счета в массиве счетов",  () => {
+    assert.equal(liveWatcherModule.hasScore(['0:1', '0:2'], '0:2'), true);
+    assert.equal(liveWatcherModule.hasScore(['0:1', '0:2'], '2:0'), true);
+    assert.equal(liveWatcherModule.hasScore(['0:1', '0:2'], '1:1'), false);
+    assert.equal(liveWatcherModule.hasScore([], '1:1'), false);
+});
+
 
 describe("подсчёт количества последних игр с одинаковым .score" , function(){
     let games = [];
@@ -55,15 +63,15 @@ describe("подсчёт количества последних игр с од�
     it("1 игра, результат = 1", function () {
         assert.equal(liveWatcher.getSameScoreLastGamesCount(games).count, 1);
     });
-    let game2 = new Game (['0:0']);
+    let game2 = new Game (['0:1']);
     games.push(game2);
-    it("Вторая игра с 0:0, результат = 1", function () {
-        assert.deepEqual(liveWatcher.getSameScoreLastGamesCount(games), {count: 1, score: '0:0'});
+    it("Вторая игра, результат = 1", function () {
+        assert.deepEqual(liveWatcher.getSameScoreLastGamesCount(games), {count: 1, score: '0:1'});
     });
 
     it("Задали значения watchScoreSeq, результат = 2", function () {
-        config.watchScoreSeq = ['5:5', '0:0', '6:6'];
-        assert.deepEqual(liveWatcher.getSameScoreLastGamesCount(games), {count: 2, score: '0:0'});
+        config.watchScoreSeq = ['5:5', '1:0', '6:6'];
+        assert.deepEqual(liveWatcher.getSameScoreLastGamesCount(games), {count: 2, score: '0:1'});
     });
 
     it("Последний гол поломал последовательность, результат = 1", function () {
@@ -72,10 +80,10 @@ describe("подсчёт количества последних игр с од�
         assert.deepEqual(liveWatcher.getSameScoreLastGamesCount(games).count, 1);
     });
 
-    it("Третья игра, 3 серии из 0:0", function () {
-        let game3 = new Game (['0:0']);
+    it("Третья игра, 3 серии из 0:1", function () {
+        let game3 = new Game (['1:0']);
         games.push(game3);
-        assert.deepEqual(liveWatcher.getSameScoreLastGamesCount(games), {count: 3, score: '0:0'});
+        assert.deepEqual(liveWatcher.getSameScoreLastGamesCount(games), {count: 3, score: '1:0'});
     });
 });
 

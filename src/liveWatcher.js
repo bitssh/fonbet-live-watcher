@@ -4,12 +4,18 @@ const config = require("./config.js").common;
 const notifier = require('./notifier.js');
 const fetch = require('node-fetch');
 const fs = require('fs');
-const getLastLine = require('./fileTools.js').getLastLine
+const getLastLine = require('./fileTools.js').getLastLine;
 require('colors');
 
 const rlFootballSportID = 44955;
 // const rlHockeySportID = 48138;
 
+function hasScore(list, score) {
+    const reversedScore = () => score.split(':').reverse().join(':');
+    return list.includes(score) || list.includes(reversedScore());
+}
+
+exports.hasScore = hasScore;
 
 exports.liveWatcher = {
     subDomains: ['line11', 'line12', 'line16', 'line31'],
@@ -76,9 +82,7 @@ exports.liveWatcher = {
         for (let cachedGame of this.cachedGames.values()) {
             let miscs = responseData.eventMiscs.filter(miscs => cachedGame.event.id === miscs.id)[0];
             if (miscs !== undefined) {
-                const score = miscs.score1 <= miscs.score2
-                    ? `${miscs.score1}:${miscs.score2}`
-                    : `${miscs.score2}:${miscs.score1}`;
+                const score = `${miscs.score1}:${miscs.score2}`;
                 if (cachedGame.score() !== score) {
                     cachedGame.miscs = miscs;
                     cachedGame.scores.push(score);
@@ -229,11 +233,11 @@ exports.liveWatcher = {
         let score;
         if (games[games.length - 1].score) {
             score = games[games.length - 1].score();
-            if (config.watchScoreSeq.indexOf(score) !== -1) {
+            if (hasScore(config.watchScoreSeq, score)) {
                 for (let i = games.length - 2; i >= 0; i -= 1) {
                     if (!games[i].score)
                         break;
-                    if (games[i].scores.indexOf(score) === -1) {
+                    if (!hasScore(games[i].scores, score)) {
                         break;
                     }
                     count += 1;

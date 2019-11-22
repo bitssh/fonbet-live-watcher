@@ -1,6 +1,6 @@
 const liveWatcher = require("./liveWatcher.js").liveWatcher;
 const assert = require("assert");
-const config = require("./config.js");
+const config = require("./config.js").common;
 require("colors");
 const cachedGames = liveWatcher.cachedGames;
 

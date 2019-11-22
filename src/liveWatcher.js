@@ -1,6 +1,6 @@
 "use strict";
 // https://www.fonbet.ru/#!/live/rocket-league
-const config = require("./config.js");
+const config = require("./config.js").common;
 const notifier = require('./notifier.js');
 const fetch = require('node-fetch');
 const fs = require('fs');

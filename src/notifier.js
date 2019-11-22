@@ -1,6 +1,5 @@
 'use strict';
-const config = require("./config.js");
-const mail = config.config.mail;
+const mail = require("./config.js").mail;
 const nodemailer = require('nodemailer');
 
 exports.sendMail = async function(message, test) {

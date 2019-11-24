@@ -187,6 +187,10 @@ exports.liveWatcher = {
         this.sendNotification(`${sportName} - нет голов в ${noGoalsCount} матчах с ${config.watchNoGoalsFromSec} секунды`);
     },
 
+    notifyAboutGoals (sportName, goalsCount) {
+        this.sendNotification(`${sportName} - голы в ${goalsCount} матчах с ${config.watchGoalsFromSec} секунды`);
+    },
+
     sendNotification(text) {
         notifier.sendMail(text)
             .then ((info) => console.log('Message sent: '.green + `${text} ${info.messageId} `))
@@ -209,6 +213,10 @@ exports.liveWatcher = {
             const noGoals = this.getNoGoalsLastGamesCount(games);
             if (noGoals >= config.watchNoGoalsCount)
                 this.notifyAboutNoGoals(sportName, noGoals);
+
+            const goals = this.getGoalsLastGamesCount(games);
+            if (goals >= config.watchGoalsCount)
+                this.notifyAboutGoals(sportName, goals);
         }
 
     },
@@ -252,6 +260,17 @@ exports.liveWatcher = {
         // не учитываем текущую игру
         for (let i = games.length - 2; i >= 0; i -= 1) {
             if (!games[i].timerSeconds || games[i].timerSeconds >= config.watchNoGoalsFromSec)
+                break;
+            count += 1;
+        }
+        return count;
+    },
+
+    getGoalsLastGamesCount(games) {
+        let count = 0;
+        // не учитываем текущую игру
+        for (let i = games.length - 2; i >= 0; i -= 1) {
+            if (!games[i].timerSeconds || games[i].timerSeconds < config.watchGoalsFromSec)
                 break;
             count += 1;
         }

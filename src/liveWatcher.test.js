@@ -1,25 +1,16 @@
 const liveWatcherModule = require("./liveWatcher.js");
 const liveWatcher = liveWatcherModule.liveWatcher;
+const Game = require("./game").Game;
 const assert = require("assert");
 const config = require("./config.js").common;
 require("colors");
-const cachedGames = liveWatcher.cachedGames;
+const cachedGames = liveWatcher.gameFetcher.cachedGames;
 
 function pushGame(game, footBall = true) {
-    game.isFootball = footBall;
-    game.score =  () => game.scores[game.scores.length - 1];
-    cachedGames.set(cachedGames.size, game);
-}
-
-class Game {
-    constructor (scores, timerSeconds) {
-        this.timerSeconds = timerSeconds;
-        this.scores = scores;
-    }
-
-    score () {
-        return this.scores[this.scores.length - 1];
-    }
+    const _game = new Game();
+    _game.isFootball = footBall;
+    _game.scores = game.scores;
+    cachedGames.set(cachedGames.size, _game);
 }
 
 it("граббинг тестовых данных", function(){
@@ -28,7 +19,7 @@ it("граббинг тестовых данных", function(){
     liveWatcher.grabUpdates();
     liveWatcher.grabUpdates();
     liveWatcher.grabUpdates();
-    assert.equal(cachedGames.get(16156082).score(), '3:0');
+    assert.equal(cachedGames.get(16156082).score, '3:0');
     assert.equal(cachedGames.get(16156082).miscs.timerSeconds, 129);
 });
 
@@ -38,10 +29,10 @@ it("удаление первой половины игр", function(){
         cachedGames.set(i, null);
     }
     assert.equal(cachedGames.size, 7);
-    liveWatcher.shrinkCache();
+    liveWatcher.gameFetcher.shrinkCache();
     assert.equal(cachedGames.size, 4);
     assert.equal(cachedGames.keys().next().value, 3);
-    liveWatcher.shrinkCache();
+    liveWatcher.gameFetcher.shrinkCache();
     assert.equal(cachedGames.size, 2);
     assert.equal(cachedGames.keys().next().value, 5);
 });
@@ -167,7 +158,7 @@ describe("sendNotifications.notifyAboutNoGoals", function() {
     cachedGames.clear();
     const noGoalGame = {isFootball: true, timerSeconds: 1};
     const goalGame = {isFootball: true, timerSeconds: 270};
-    const newGame = {isFootball: true, scores: ['0:0'], new: true};
+    const newGame = {isFootball: true, scores: ['0:0'], isNew: true};
 
     it("2 матча без голов - без оповещений", function () {
         cachedGames.clear();
@@ -227,9 +218,7 @@ describe("sendNotifications.notifyAboutNoGoals", function() {
 
 describe("sendNotifications.notifyAboutScoreSeq", function() {
     cachedGames.clear();
-
     config.watchScoreSeqCount = 3;
-
     const game = {scores: [ '4:4'], isFootball: true};
 
     it("3 серии и не задан массив очков", function () {
@@ -245,7 +234,6 @@ describe("sendNotifications.notifyAboutScoreSeq", function() {
         pushGame({scores: [ '5:5']});
         pushGame({scores: [ '5:5']});
         pushGame({scores: [ '5:5']});
-
         liveWatcher.sendNotifications(game);
         assert.equal(notifications.length, 0);
     });

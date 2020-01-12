@@ -1,2 +1,1 @@
-cd src
-node main.js
+node src\main.js

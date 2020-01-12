@@ -12,7 +12,7 @@ const timerId = setInterval(() => {
             }
         })
     },
-    liveWatcher.getFetchTimeout()
+    liveWatcher.gameFetcher.getFetchTimeout()
 );
 
 

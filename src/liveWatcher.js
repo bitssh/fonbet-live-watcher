@@ -92,8 +92,7 @@ exports.liveWatcher = {
     sendNotification(text) {
         notifier.sendMail(text)
             .then ((info) => console.log('Message sent: '.green + `${text} ${info.messageId} `))
-            // FIXME err = undefined
-            .catch(err => console.error(text + ' ' + err.red));
+            .catch(err => console.error(text + ' ' + err.message.red));
 
     },
 

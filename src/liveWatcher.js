@@ -3,8 +3,7 @@
 
 const config = require("./config.js").common;
 const notifier = require('./notifier.js');
-const fs = require('fs');
-const getLastLine = require('./fileTools.js').getLastLine;
+const fileTools = require('./fileTools.js');
 require('colors');
 
 function hasScore(list, score) {
@@ -20,7 +19,7 @@ exports.liveWatcher = {
 
     initialize() {
         for (let bool of [false, true]) {
-            getLastLine(this.getCSVFilename(bool), 1)
+            fileTools.getLastLine(this.getCSVFilename(bool), 1)
                 .then((lastLine) => {
                     this.lastCSVLine[bool] = lastLine.split(';');
                 })
@@ -55,21 +54,11 @@ exports.liveWatcher = {
     },
     appendToFile(game) {
         let csvRow = [game.now, game.event.name.replace('Матч', 'Match'), "'" + game.score, game.timerSeconds];
-        let line = csvRow.join(';');
         let lastLine = this.lastCSVLine[game.isFootball];
         if (!lastLine || !(csvRow[1] === lastLine[1] && csvRow[2] === lastLine[2])) {
             this.lastCSVLine[game.isFootball] = null;
-            try {
-                const filename = this.getCSVFilename(game.isFootball);
-                const fd = fs.openSync(filename, 'a');
-                try {
-                    fs.appendFileSync(fd, line + '\r\n');
-                } finally {
-                    fs.closeSync(fd);
-                }
-            } catch (err) {
-                console.error(err.red)
-            }
+            const line = csvRow.join(';');
+            fileTools.appendFile(this.getCSVFilename(game.isFootball), line);
         }
 
     },

@@ -5,7 +5,7 @@ const Stream = require('stream');
 exports.getLastLine = (fileName, minLength) => {
     let inStream = fs.createReadStream(fileName);
     let outStream = new Stream;
-    return new Promise((resolve, reject)=> {
+    return new Promise((resolve, reject) => {
         let rl = readline.createInterface(inStream, outStream);
 
         let lastLine = '';
@@ -21,4 +21,17 @@ exports.getLastLine = (fileName, minLength) => {
             resolve(lastLine)
         });
     })
-}
+};
+
+exports.appendFile = (filePath, data) => {
+    try {
+        const fd = fs.openSync(filePath, 'a');
+        try {
+            fs.appendFileSync(fd, data + '\r\n');
+        } finally {
+            fs.closeSync(fd);
+        }
+    } catch (err) {
+        console.error(err.red)
+    }
+};

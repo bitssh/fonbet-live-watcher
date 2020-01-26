@@ -1,4 +1,5 @@
 const Game = require("./game").Game;
+const GameMap = require("./game").GameMap;
 const config = require("./config.js").common;
 const fetch = require('node-fetch');
 
@@ -6,7 +7,7 @@ exports.gameFetcher = {
     subDomains: ['line11', 'line12', 'line16', 'line31'],
     lastPacketVersion: 0,
     sportsIDs: new Set,
-    cachedGames: new Map(),
+    cachedGames: new GameMap(),
 
     getFetchTimeout() {
         return config.useDummyUrl ? 100 : 2000;
@@ -55,7 +56,7 @@ exports.gameFetcher = {
             if (cachedGame === undefined) {
                 cachedGame = new Game();
 
-                this.cachedGames.set(event.id, cachedGame);
+                cachedGame = this.cachedGames.newGame(event.id);
             }
             cachedGame.event = event;
         }

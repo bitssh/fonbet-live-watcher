@@ -2,7 +2,8 @@
 // https://www.fonbet.ru/#!/live/rocket-league
 
 const config = require("./config.js").common;
-const notifier = require('./notifier.js');
+const notifying = require('./notifying.js');
+const Notifier = notifying.Notifier;
 const fileTools = require('./fileTools.js');
 require('colors');
 
@@ -31,7 +32,7 @@ exports.liveWatcher = {
     },
     getCSVFilename (football) {
         const sportName = football ? 'football' : 'hockey';
-        return `./csv/${sportName}.csv`;
+        return `./../csv/${sportName}.csv`;
     },
     async grabUpdates() {
         let fetchedGames = await this.gameFetcher.fetchUpdates();
@@ -63,7 +64,7 @@ exports.liveWatcher = {
 
     },
     appendToConsole(game) {
-        const games = this.getGames(game.isFootball);
+        const games = this.gameFetcher.cachedGames.getGames(game.isFootball);
         const timerSeconds =  game.timerSeconds ? game.timerSeconds : '   ';
         const indent = game.isFootball ? '            ' : '';
 
@@ -74,7 +75,7 @@ exports.liveWatcher = {
 
         let logStr = `${game.now} ${indent}${seqStr} ${clnStr} `
             + `${game.event.id}  ${game.event.name} <${game.score}> ${timerSeconds} ${game.timerUpdate} `;
-        console.log(game.isNew ? logStr.grey: logStr );
+        console.log(game.isNew() ? logStr.grey: logStr );
 
     },
     notifyAboutScoreSeq (sportName, sameScores) {
@@ -97,27 +98,26 @@ exports.liveWatcher = {
     },
 
     sendNotifications(game) {
-        const games = this.getGames(game.isFootball);
+        const games = this.gameFetcher.cachedGames.getGames(game.isFootball);
+
         const sportName = game.isFootball ? 'Футбол' : 'Хоккей';
         const sameScores = this.getSameScoreLastGamesCount(games);
 
+        const notifier  = new Notifier(sportName, game.event ? game.event.name : '');
         if (sameScores.count >= config.watchScoreSeqCount)
-            this.notifyAboutScoreSeq(sportName, sameScores);
+            notifier.send(new notifying.scoreSeqNotification(sameScores.count, sameScores.score));
 
         // проверяем является ли текущий матч новым
-        if (game.isNew && game === games[games.length - 1]) {
+        if (game.isNew()) {
             const noGoals = this.getNoGoalsLastGamesCount(games);
             if (noGoals >= config.watchNoGoalsCount)
-                this.notifyAboutNoGoals(sportName, noGoals);
+                notifier.send(new notifying.noGoalsNotification(noGoals));
 
             const goals = this.getGoalsLastGamesCount(games);
             if (goals >= config.watchGoalsCount)
-                this.notifyAboutGoals(sportName, goals);
+                notifier.send(new notifying.goalsNotification(goals));
         }
 
-    },
-    getGames(football) {
-        return Array.from(this.gameFetcher.cachedGames.values()).filter((item) => item.isFootball === football);
     },
 
     getSameScoreLastGamesCount(games) {

@@ -1,11 +1,12 @@
 const rlFootballSportID = 44955;
 // const rlHockeySportID = 48138;
 
-exports.Game = class Game {
+class Game {
 
     constructor(scores) {
         this.now = new Date().toLocaleString();
         this.scores = scores ? scores : [];
+        this.list = null;
     }
 
     get score () {
@@ -17,7 +18,7 @@ exports.Game = class Game {
     }
 
     get isFootball () {
-        return this.event.sportId === rlFootballSportID;
+        return this.event ? this.event.sportId === rlFootballSportID : true;
     }
 
     set isFootball (football) {
@@ -25,10 +26,6 @@ exports.Game = class Game {
             this.event = {};
         }
         this.event.sportId = football ? rlFootballSportID : 0;
-    }
-
-    get isNew () {
-        return this.score === '0:0';
     }
 
     get date() {
@@ -41,5 +38,30 @@ exports.Game = class Game {
             : new Date(this.miscs.timerUpdateTimestamp * 1000).toLocaleTimeString();
     }
 
-
+    isNew() {
+        return this.list ? this.list.isNew(this) : this.score === '0:0';
+    }
 }
+
+exports.GameMap = class GameMap extends Map {
+
+    getGames(football) {
+        return Array.from(this.values()).filter((item) => item.isFootball === football);
+    }
+
+    isNew(game) {
+        if (game.score !== '0:0')
+             return false;
+        const sameGames = this.getGames(game.isFootball);
+        return !sameGames.length || sameGames[sameGames.length - 1] === game;
+    }
+
+    newGame(eventId) {
+        const game = new Game();
+        game.list = this;
+        this.set(eventId, game);
+        return game;
+    }
+};
+
+exports.Game = Game;

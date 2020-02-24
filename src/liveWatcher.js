@@ -32,7 +32,7 @@ exports.liveWatcher = {
     },
     getCSVFilename (football) {
         const sportName = football ? 'football' : 'hockey';
-        return `./../csv/${sportName}.csv`;
+        return `./csv/${sportName}.csv`;
     },
     async grabUpdates() {
         let fetchedGames = await this.gameFetcher.fetchUpdates();

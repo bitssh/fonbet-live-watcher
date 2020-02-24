@@ -3,33 +3,39 @@ const config = require("./config.js").common;
 const mail = require("./config.js").mail;
 const nodemailer = require('nodemailer');
 
-class baseNotification {
-    constructor(seqCount, data) {
+class BaseNotification {
+    constructor(seqCount) {
         this.seqCount = seqCount;
-        this.data = data;
     }
+    getText() {}
 }
 
-exports.noGoalsNotification = class noGoalsNotification extends baseNotification {
+class NoGoalsNotification extends BaseNotification {
     getText() {
         return `нет голов в ${this.seqCount} матчах с ${config.watchNoGoalsFromSec} секунды`;
     }
-};
+}
 
-exports.goalsNotification = class extends baseNotification {
+class GoalsNotification extends BaseNotification {
     getText() {
         return `голы в ${this.seqCount} матчах с ${config.watchNoGoalsFromSec} секунды`;
     }
-};
+}
 
-exports.scoreSeqNotification = class extends baseNotification {
+class ScoreSeqNotification  extends BaseNotification {
+    constructor(seqCount, score) {
+        super(seqCount);
+        this.seqCount = seqCount;
+        this.score = score;
+    }
     getText() {
         return `серия из ${this.seqCount} матчей ${this.data}`;
     }
-};
+}
+
 function sendText (text) {
     text = `${this.sportName} - ${text}` + this.matchName ? `, ${this.matchName}` : '';
-    sendMail(text)
+    sender.sendMail(text)
         .then ((info) => console.log('Message sent: '.green + `${text} ${info.messageId} `))
         .catch(err => console.error(text + ' ' + err.message.red));
 
@@ -63,9 +69,7 @@ let sender = {
     }
 };
 
-exports.sender = sender;
-
-exports.Notifier = class {
+ class Notifier {
     constructor (sportName, matchName) {
         this.sportName = sportName;
         this.matchName = matchName;
@@ -74,6 +78,12 @@ exports.Notifier = class {
     send(notification) {
         sender.sendNotification(notification);
     }
-};
+}
+
+exports.sender = sender;
+exports.ScoreSeqNotification = ScoreSeqNotification;
+exports.GoalsNotification = GoalsNotification;
+exports.NoGoalsNotification = NoGoalsNotification;
+exports.Notifier = Notifier;
 
 

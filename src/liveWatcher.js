@@ -78,17 +78,6 @@ exports.liveWatcher = {
         console.log(game.isNew() ? logStr.grey: logStr );
 
     },
-    notifyAboutScoreSeq (sportName, sameScores) {
-        this.sendNotification(`${sportName} - серия из ${sameScores.count} матчей ${sameScores.score}`);
-    },
-
-    notifyAboutNoGoals (sportName, noGoalsCount) {
-        this.sendNotification(`${sportName} - нет голов в ${noGoalsCount} матчах с ${config.watchNoGoalsFromSec} секунды`);
-    },
-
-    notifyAboutGoals (sportName, goalsCount) {
-        this.sendNotification(`${sportName} - голы в ${goalsCount} матчах с ${config.watchGoalsFromSec} секунды`);
-    },
 
     sendNotification(text) {
         notifier.sendMail(text)
@@ -101,21 +90,21 @@ exports.liveWatcher = {
         const games = this.gameFetcher.cachedGames.getGames(game.isFootball);
 
         const sportName = game.isFootball ? 'Футбол' : 'Хоккей';
-        const sameScores = this.getSameScoreLastGamesCount(games);
-
         const notifier  = new Notifier(sportName, game.event ? game.event.name : '');
+
+        const sameScores = this.getSameScoreLastGamesCount(games);
         if (sameScores.count >= config.watchScoreSeqCount)
-            notifier.send(new notifying.scoreSeqNotification(sameScores.count, sameScores.score));
+            notifier.send(new notifying.ScoreSeqNotification(sameScores.count, sameScores.score));
 
         // проверяем является ли текущий матч новым
         if (game.isNew()) {
             const noGoals = this.getNoGoalsLastGamesCount(games);
             if (noGoals >= config.watchNoGoalsCount)
-                notifier.send(new notifying.noGoalsNotification(noGoals));
+                notifier.send(new notifying.NoGoalsNotification(noGoals));
 
             const goals = this.getGoalsLastGamesCount(games);
             if (goals >= config.watchGoalsCount)
-                notifier.send(new notifying.goalsNotification(goals));
+                notifier.send(new notifying.GoalsNotification(goals));
         }
 
     },

@@ -4,12 +4,19 @@ const Game = require("./game").Game;
 const assert = require("assert");
 const config = require("./config.js").common;
 const notifying = require('./notifying.js');
+const {hasScore} = require("./sequenceChecking/SameScoreChecker");
+const {SameScoreChecker} = require("./sequenceChecking/SameScoreChecker");
+const {NoGoalsChecker} = require("./sequenceChecking/NoGoalsChecker");
+const {GoalsChecker} = require("./sequenceChecking/GoalsChecker");
 const Notifier = notifying.Notifier;
-require("colors");
 const cachedGames = liveWatcher.gameFetcher.cachedGames;
 
 let notifications = [];
 notifying.sender.sendNotification = (notification) => {
+    notifications.push(notification)
+};
+
+notifying.Notifier.prototype.sendNotification = (notification) => {
     notifications.push(notification)
 };
 
@@ -46,10 +53,10 @@ it("удаление первой половины игр", function(){
 });
 
 it("проверяет вхождение счета в массиве счетов",  () => {
-    assert.equal(liveWatcherModule.hasScore(['0:1', '0:2'], '0:2'), true);
-    assert.equal(liveWatcherModule.hasScore(['0:1', '0:2'], '2:0'), true);
-    assert.equal(liveWatcherModule.hasScore(['0:1', '0:2'], '1:1'), false);
-    assert.equal(liveWatcherModule.hasScore([], '1:1'), false);
+    assert.equal(hasScore(['0:1', '0:2'], '0:2'), true);
+    assert.equal(hasScore(['0:1', '0:2'], '2:0'), true);
+    assert.equal(hasScore(['0:1', '0:2'], '1:1'), false);
+    assert.equal(hasScore([], '1:1'), false);
 });
 
 
@@ -60,38 +67,36 @@ describe("подсчёт количества последних игр с од�
     games.push(game1);
 
     it("1 игра, результат = 1", () => {
-        assert.equal(liveWatcher.getSameScoreLastGamesCount(games).count, 1);
+        assert.equal(SameScoreChecker.calcSeqCount(games).count, 1);
     });
     let game2 = new Game (['0:1']);
     games.push(game2);
     it("Вторая игра, результат = 1", () => {
-        assert.deepEqual(liveWatcher.getSameScoreLastGamesCount(games), {count: 1, score: '0:1'});
+        assert.deepEqual(SameScoreChecker.calcSeqCount(games), {count: 1, score: '0:1'});
     });
 
     it("Задали значения watchScoreSeq, результат = 2", () => {
         config.watchScoreSeq = ['5:5', '1:0', '6:6'];
-        assert.deepEqual(liveWatcher.getSameScoreLastGamesCount(games), {count: 2, score: '0:1'});
+        assert.deepEqual(SameScoreChecker.calcSeqCount(games), {count: 2, score: '0:1'});
     });
 
     it("Последний гол поломал последовательность, результат = 1", () => {
         game2.scores.push('0:1');
         game2.scores.push('1:1');
-        assert.deepEqual(liveWatcher.getSameScoreLastGamesCount(games).count, 1);
+        assert.deepEqual(SameScoreChecker.calcSeqCount(games).count, 1);
     });
 
     it("Третья игра, 3 серии из 0:1", () => {
         let game3 = new Game (['1:0']);
         games.push(game3);
-        assert.deepEqual(liveWatcher.getSameScoreLastGamesCount(games), {count: 3, score: '1:0'});
+        assert.deepEqual(SameScoreChecker.calcSeqCount(games), {count: 3, score: '1:0'});
     });
 });
 
-describe("getNoGoalsLastGamesCount", function() {
+describe("NoGoalsChecker", function() {
     let games = [];
     const checkGoalsCountAssert = (goals) => {
-        games.push({scores: ['0:0']});
-        assert.equal(liveWatcher.getNoGoalsLastGamesCount(games), goals);
-        games.pop();
+        assert.equal(NoGoalsChecker.calcSeqCount(games), goals);
     };
     config.watchNoGoalsCount = 3;
     config.watchNoGoalsFromSec = 270;
@@ -125,15 +130,13 @@ describe("getNoGoalsLastGamesCount", function() {
 describe("getGoalsLastGamesCount", function() {
     let games = [];
     const checkGoalsCountAssert = (goals) => {
-        games.push({scores: ['0:0']});
-        assert.equal(liveWatcher.getGoalsLastGamesCount(games), goals);
-        games.pop();
+        assert.equal(GoalsChecker.calcSeqCount(games), goals);
     };
     config.watchGoalsCount = 3;
     config.watchGoalsFromSec = 270;
 
     it("нет игр - 0 игр с голами", () => {
-        assert.equal(liveWatcher.getGoalsLastGamesCount(games), 0);
+        assert.equal(GoalsChecker.calcSeqCount(games), 0);
     });
     it("две игры с голами", () => {
         games.push({scores: ['4:4'], timerSeconds: 290});
@@ -169,13 +172,13 @@ describe("sendNotifications.notifyAboutNoGoals", function() {
         cachedGames.clear();
         cachedGames.set(0, noGoalGame);
         cachedGames.set(1, noGoalGame);
-        liveWatcher.sendNotifications(noGoalGame);
+        liveWatcher.checkSequences(noGoalGame);
         assert.equal(notifications.length, 0);
     });
 
     it("новый матч - без оповещений", () => {
         cachedGames.set(2, newGame);
-        liveWatcher.sendNotifications(newGame);
+        liveWatcher.checkSequences(newGame);
         assert.equal(notifications.length, 0);
     });
 
@@ -183,20 +186,20 @@ describe("sendNotifications.notifyAboutNoGoals", function() {
         cachedGames.set(2, noGoalGame);
         cachedGames.set(3, newGame);
         //console.log(newGame);
-        liveWatcher.sendNotifications(newGame);
+        liveWatcher.checkSequences(newGame);
         assert.equal(notifications.length, 1);
         assert.equal(notifications[0].seqCount, 3);
     });
 
     it("проверка текста оповещения о серии без голов", () => {
-        assert.equal(notifications[0].getText(), 'нет голов в 3 матчах с 270 секунды');
+        assert.equal(notifications[0].notificationText, 'нет голов в 3 матчах с 270 секунды');
     });
 
 
     it("повторный новый матч - нет новых оповещений", () => {
         notifications = [];
         cachedGames.set(4, newGame);
-        liveWatcher.sendNotifications(newGame);
+        liveWatcher.checkSequences(newGame);
         assert.equal(notifications.length, 0);
     });
 
@@ -204,7 +207,7 @@ describe("sendNotifications.notifyAboutNoGoals", function() {
         cachedGames.set(3, noGoalGame);
         cachedGames.set(4, noGoalGame);
         cachedGames.set(5, newGame);
-        liveWatcher.sendNotifications(newGame);
+        liveWatcher.checkSequences(newGame);
         assert.equal(notifications.length, 1);
         assert.equal(notifications[0].seqCount, 5);
         notifications = [];
@@ -214,7 +217,7 @@ describe("sendNotifications.notifyAboutNoGoals", function() {
         notifications = [];
 
         cachedGames.set(1, goalGame);
-        liveWatcher.sendNotifications(newGame);
+        liveWatcher.checkSequences(newGame);
         assert.equal(notifications.length, 1);
         assert.equal(notifications[0].seqCount, 3);
     });
@@ -237,28 +240,28 @@ describe("sendNotifications.notifyAboutScoreSeq", function() {
         pushGame({scores: [ '5:5']});
         pushGame({scores: [ '5:5']});
         pushGame({scores: [ '5:5']});
-        liveWatcher.sendNotifications(game);
+        liveWatcher.checkSequences(game);
         assert.equal(notifications.length, 0);
     });
 
     it("3 серии и задан массив очков", () => {
         notifications = [];
         config.watchScoreSeq = ['4:4'];
-        liveWatcher.sendNotifications(game);
+        liveWatcher.checkSequences(game);
         assert.equal(notifications.length, 0);
         config.watchScoreSeq = ['4:4', '5:5', '6:6'];
-        liveWatcher.sendNotifications(game);
+        liveWatcher.checkSequences(game);
         assert.equal(notifications.length, 1);
-        assert.deepEqual(notifications[0], {seqCount: 3, score: '5:5'});
+        assert.deepEqual(notifications[0].seqCount, {count: 3, score: '5:5'});
 
     });
 
     it("добавили матч - 4 серии", () => {
         notifications = [];
         pushGame({scores: [ '5:5']});
-        liveWatcher.sendNotifications(game);
+        liveWatcher.checkSequences(game);
         assert.equal(notifications.length, 1);
-        assert.deepEqual(notifications[0], {seqCount: 4, score: '5:5'});
+        assert.deepEqual(notifications[0].seqCount, {count: 4, score: '5:5'});
 
     });
 
@@ -266,8 +269,8 @@ describe("sendNotifications.notifyAboutScoreSeq", function() {
         notifications = [];
         pushGame({scores: [ '5:5']}, false);
         pushGame({scores: [ '5:5']}, false);
-        liveWatcher.sendNotifications(game);
-        assert.deepEqual(notifications[0], {seqCount: 4, score: '5:5'});
+        liveWatcher.checkSequences(game);
+        assert.deepEqual(notifications[0].seqCount, {count: 4, score: '5:5'});
 
     });
 
@@ -275,7 +278,7 @@ describe("sendNotifications.notifyAboutScoreSeq", function() {
         notifications = [];
         cachedGames.set(6, {scores: [ '4:4'], isFootball: true});
         cachedGames.set(7, {scores: [ '4:4'], isFootball: true});
-        liveWatcher.sendNotifications(game);
+        liveWatcher.checkSequences(game);
         assert.equal(notifications.length, 0);
 
     });

@@ -5,14 +5,11 @@ const config = require("./config.js").common;
 const notifying = require('./notifying.js');
 const Notifier = notifying.Notifier;
 const fileTools = require('./fileTools.js');
-require('colors');
+const {GoalsChecker} = require("./sequenceChecking/GoalsChecker");
+const {SameScoreChecker} = require("./sequenceChecking/SameScoreChecker");
+const {NoGoalsChecker} = require("./sequenceChecking/NoGoalsChecker");
 
-function hasScore(list, score) {
-    const reversedScore = () => score.split(':').reverse().join(':');
-    return list.includes(score) || list.includes(reversedScore());
-}
-
-exports.hasScore = hasScore;
+const sequenceCheckerClasses = [SameScoreChecker, NoGoalsChecker, GoalsChecker];
 
 exports.liveWatcher = {
     lastCSVLine: [null, null],
@@ -50,7 +47,7 @@ exports.liveWatcher = {
                 this.appendToFile(game);
             }
             this.appendToConsole(game);
-            this.sendNotifications(game);
+            this.checkSequences(game);
         }
     },
     appendToFile(game) {
@@ -68,8 +65,8 @@ exports.liveWatcher = {
         const timerSeconds =  game.timerSeconds ? game.timerSeconds : '   ';
         const indent = game.isFootball ? '            ' : '';
 
-        let seqStr = this.getSameScoreLastGamesCount(games).count;
-        let clnStr = this.getNoGoalsLastGamesCount(games);
+        let seqStr = SameScoreChecker.calcSeqCount(games).count;
+        let clnStr = NoGoalsChecker.calcSeqCount(games);
         seqStr =  + seqStr >= config.watchScoreSeqCount - 1 ? String('S' + seqStr).yellow : '  ';
         clnStr =  + clnStr >= config.watchNoGoalsCount - 1 ? String('C' + clnStr).yellow : '  ';
 
@@ -79,75 +76,18 @@ exports.liveWatcher = {
 
     },
 
-    sendNotification(text) {
-        notifier.sendMail(text)
-            .then ((info) => console.log('Message sent: '.green + `${text} ${info.messageId} `))
-            .catch(err => console.error(text + ' ' + err.message.red));
-
-    },
-
-    sendNotifications(game) {
+    checkSequences(game) {
         const games = this.gameFetcher.cachedGames.getGames(game.isFootball);
 
         const sportName = game.isFootball ? 'Футбол' : 'Хоккей';
         const notifier  = new Notifier(sportName, game.event ? game.event.name : '');
 
-        const sameScores = this.getSameScoreLastGamesCount(games);
-        if (sameScores.count >= config.watchScoreSeqCount)
-            notifier.send(new notifying.ScoreSeqNotification(sameScores.count, sameScores.score));
-
-        // проверяем является ли текущий матч новым
-        if (game.isNew()) {
-            const noGoals = this.getNoGoalsLastGamesCount(games);
-            if (noGoals >= config.watchNoGoalsCount)
-                notifier.send(new notifying.NoGoalsNotification(noGoals));
-
-            const goals = this.getGoalsLastGamesCount(games);
-            if (goals >= config.watchGoalsCount)
-                notifier.send(new notifying.GoalsNotification(goals));
-        }
-
-    },
-
-    getSameScoreLastGamesCount(games) {
-        let count = 1;
-        let score;
-        if (games[games.length - 1].score) {
-            score = games[games.length - 1].score;
-            if (hasScore(config.watchScoreSeq, score)) {
-                for (let i = games.length - 2; i >= 0; i -= 1) {
-                    if (!games[i].score)
-                        break;
-                    if (!hasScore(games[i].scores, score)) {
-                        break;
-                    }
-                    count += 1;
-                }
+        for (let SequenceCheckerClass of sequenceCheckerClasses) {
+            const sequenceChecker = new SequenceCheckerClass(games, game);
+            if (sequenceChecker.checkCondition(games, game)) {
+                sequenceChecker.sendNotification(notifier);
             }
         }
-        return {count, score};
-    },
-
-    getNoGoalsLastGamesCount(games) {
-        let count = 0;
-        // не учитываем текущую игру
-        for (let i = games.length - 2; i >= 0; i -= 1) {
-            if (!games[i].timerSeconds || games[i].timerSeconds >= config.watchNoGoalsFromSec)
-                break;
-            count += 1;
-        }
-        return count;
-    },
-
-    getGoalsLastGamesCount(games) {
-        let count = 0;
-        // не учитываем текущую игру
-        for (let i = games.length - 2; i >= 0; i -= 1) {
-            if (!games[i].timerSeconds || games[i].timerSeconds < config.watchGoalsFromSec)
-                break;
-            count += 1;
-        }
-        return count;
     },
 
 

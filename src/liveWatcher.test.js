@@ -8,6 +8,7 @@ const {hasScore} = require("./sequenceChecking/SameScoreChecker");
 const {SameScoreChecker} = require("./sequenceChecking/SameScoreChecker");
 const {NoGoalsChecker} = require("./sequenceChecking/NoGoalsChecker");
 const {GoalsChecker} = require("./sequenceChecking/GoalsChecker");
+const {TotalSequenceChecker} = require("./sequenceChecking/TotalSequenceChecker");
 const Notifier = notifying.Notifier;
 const cachedGames = liveWatcher.gameFetcher.cachedGames;
 
@@ -157,6 +158,50 @@ describe("getGoalsLastGamesCount", function() {
         games.push({scores: [ '5:5'], timerSeconds: 300});
         games.push({scores: [ '5:5'], timerSeconds: 300});
         checkGoalsCountAssert(3);
+    });
+});
+
+describe("TotalSequenceChecker", function() {
+    let games = [];
+    cachedGames.clear();
+    const checkTotalsAssert = (total) => {
+        assert.equal(TotalSequenceChecker.calcSeqCount(Array.from(cachedGames.values())), total);
+    };
+    config.watchTotalSeqCount = 3;
+    config.watchTotalSeqLessThan = 7.5;
+
+    it("все игры с тоталом меньше 7, результат 0", () => {
+        cachedGames.clear();
+        pushGame({scores: ['0:7']});
+        pushGame({scores: ['2:5']});
+        pushGame({scores: ['0:1']});
+        pushGame({scores: ['3:4']});
+        checkTotalsAssert(0);
+    });
+    it("тотал больше 7.5 максимум в двух играх подряд - результат 0 ", () => {
+        pushGame({scores: ['7:10']});
+        pushGame({scores: ['12:5']});
+        pushGame({scores: ['0:7']});
+        checkTotalsAssert(0);
+        pushGame({scores: ['11:11']});
+        pushGame({scores: ['11:11']});
+        pushGame({scores: ['0:0']});
+        checkTotalsAssert(0);
+    });
+    it("тотал больше 7.5 в трех играх подряд - результат 3", () => {
+        pushGame({scores: ['7:10']});
+        pushGame({scores: ['12:5']});
+        pushGame({scores: ['1:7']});
+        checkTotalsAssert(3);
+    });
+    it("тотал больше 7.5 ещё в двух играх подряд - результат 5", () => {
+        pushGame({scores: ['10:10']});
+        pushGame({scores: ['11:11']});
+        checkTotalsAssert(5);
+    });
+    it("в следующей игре тотал меньше 7.5 - результат 0", () => {
+        pushGame({scores: ['3:4']});
+        checkTotalsAssert(0);
     });
 });
 

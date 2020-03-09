@@ -9,6 +9,12 @@ exports.common = {
     watchGoalsCount: 3,
     watchGoalsFromSec: 270,
 
+    // Подсчёт тоталов в конце матча (итоговая сумма голов)
+    // например: Футбол - тотал меньше 7.5 в 5 матчах подряд
+    watchTotalSeqLessThan: 7.5,
+    watchTotalSeqCount: 5,
+
+
     cachedGamesSize: 200,
     useDummyUrl: false,
     fileWritingEnabled: true,

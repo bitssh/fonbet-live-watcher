@@ -5,11 +5,17 @@ const config = require("./config.js").common;
 const notifying = require('./notifying.js');
 const Notifier = notifying.Notifier;
 const fileTools = require('./fileTools.js');
+const {TotalSequenceChecker} = require("./sequenceChecking/TotalSequenceChecker");
 const {GoalsChecker} = require("./sequenceChecking/GoalsChecker");
 const {SameScoreChecker} = require("./sequenceChecking/SameScoreChecker");
 const {NoGoalsChecker} = require("./sequenceChecking/NoGoalsChecker");
 
-const sequenceCheckerClasses = [SameScoreChecker, NoGoalsChecker, GoalsChecker];
+const sequenceCheckerClasses = [
+    SameScoreChecker,
+    NoGoalsChecker,
+    GoalsChecker,
+    TotalSequenceChecker,
+];
 
 exports.liveWatcher = {
     lastCSVLine: [null, null],

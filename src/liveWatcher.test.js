@@ -107,11 +107,11 @@ describe("NoGoalsChecker", function() {
     });
     it("две игры без голов", () => {
         games.push({scores: ['4:4'], timerSeconds: 100});
-        games.push({scores: ['4:4'], timerSeconds: 200});
+        games.push({scores: ['0:0', '4:4'], timerSeconds: 200});
         checkGoalsCountAssert(2);
     });
     it("в последней игре был гол вконце  - значит 0 последних игр без голов", () => {
-        games.push({scores: ['5:5'], timerSeconds: 300});
+        games.push({scores: ['0:0', '5:5'], timerSeconds: 300});
         checkGoalsCountAssert(0);
     });
     it("в последней игре был гол, но не вконце - значит 1 последняя игра без голов", () => {
@@ -119,7 +119,7 @@ describe("NoGoalsChecker", function() {
         checkGoalsCountAssert(1);
     });
     it("гол в конце игры и последующие 3 игры без голов", () => {
-        games.push({scores: ['4:4'], timerSeconds: 300});
+        games.push({scores: ['0:0', '4:4'], timerSeconds: 300});
         games.push({scores: ['5:5'], timerSeconds: 1});
         games.push({scores: [ '5:5'], timerSeconds: 1});
         games.push({scores: [ '5:5'], timerSeconds: 1});
@@ -128,7 +128,7 @@ describe("NoGoalsChecker", function() {
 });
 
 
-describe("getGoalsLastGamesCount", function() {
+describe("GoalsChecker", function() {
     let games = [];
     const checkGoalsCountAssert = (goals) => {
         assert.equal(GoalsChecker.calcSeqCount(games), goals);
@@ -239,7 +239,6 @@ describe("sendNotifications.notifyAboutNoGoals", function() {
     it("проверка текста оповещения о серии без голов", () => {
         assert.equal(notifications[0].notificationText, 'нет голов в 3 матчах с 270 секунды');
     });
-
 
     it("повторный новый матч - нет новых оповещений", () => {
         notifications = [];

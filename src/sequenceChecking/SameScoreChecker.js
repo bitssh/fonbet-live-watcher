@@ -1,9 +1,10 @@
 const {GameSequenceChecker} = require("./sequenceChecking");
 const config = require("../config.js").common;
 
+const reversedScore = (score) => score.split(':').reverse().join(':');
+
 function hasScore(list, score) {
-    const reversedScore = () => score.split(':').reverse().join(':');
-    return list.includes(score) || list.includes(reversedScore());
+    return list.includes(score) || list.includes(reversedScore(score));
 }
 
 class SameScoreChecker extends GameSequenceChecker {

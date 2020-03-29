@@ -15,7 +15,7 @@ exports.getLastLine = (fileName, minLength) => {
             }
         });
 
-        rl.on('error', reject)
+        rl.on('error', reject);
 
         rl.on('close', function () {
             resolve(lastLine)
@@ -23,15 +23,34 @@ exports.getLastLine = (fileName, minLength) => {
     })
 };
 
-exports.appendFile = (filePath, data) => {
+/**
+ *
+ * @param {string} filePath
+ * @param {Array} lines
+ * @param {boolean} appendUtf8BOM
+ */
+function appendLinesToFile (filePath, lines, appendUtf8BOM) {
     try {
+        if (appendUtf8BOM && !fs.existsSync(filePath)) {
+            if (!lines.length) {
+                lines.push('');
+            }
+            lines[0] = '\ufeff' + lines[0];
+        }
         const fd = fs.openSync(filePath, 'a');
         try {
-            fs.appendFileSync(fd, data + '\r\n');
+            for (let line of lines) {
+                fs.appendFileSync(fd, line + '\r\n', {encoding: 'utf8'});
+            }
         } finally {
             fs.closeSync(fd);
         }
     } catch (err) {
-        console.error(err.red)
+        console.error(err)
     }
-};
+}
+
+exports.appendFile = (filePath, data, appendUtf8BOM) => appendLinesToFile(filePath, [data], appendUtf8BOM);
+exports.appendLinesToFile = appendLinesToFile;
+
+

@@ -3,6 +3,8 @@ const readline = require('readline');
 const Stream = require('stream');
 
 exports.getLastLine = (fileName, minLength) => {
+    if (!fs.existsSync(fileName))
+        return Promise.resolve(null);
     let inStream = fs.createReadStream(fileName);
     let outStream = new Stream;
     return new Promise((resolve, reject)=> {
@@ -21,4 +23,4 @@ exports.getLastLine = (fileName, minLength) => {
             resolve(lastLine)
         });
     })
-}
+};

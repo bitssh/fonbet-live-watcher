@@ -4,13 +4,13 @@ const Game = require("./game").Game;
 const assert = require("assert");
 const config = require("./config.js").common;
 const notifying = require('./notifying.js');
+const {describe, it} = require("mocha");
 const {hasScore} = require("./sequenceChecking/SameScoreChecker");
 const {SameScoreChecker} = require("./sequenceChecking/SameScoreChecker");
 const {NoGoalsChecker} = require("./sequenceChecking/NoGoalsChecker");
 const {GoalsChecker} = require("./sequenceChecking/GoalsChecker");
 const {TotalChecker} = require("./sequenceChecking/TotalChecker");
 const {TotalSequenceChecker} = require("./sequenceChecking/TotalSequenceChecker");
-const Notifier = notifying.Notifier;
 const cachedGames = liveWatcher.gameFetcher.cachedGames;
 
 let notifications = [];
@@ -162,7 +162,6 @@ describe("GoalsChecker", function () {
 
 
 describe("TotalChecker", function () {
-    let games = [];
     let game;
     cachedGames.clear();
     const checkTotalAssert = (total) => {
@@ -200,7 +199,6 @@ describe("TotalChecker", function () {
 
 
 describe("TotalSequenceChecker", function () {
-    let games = [];
     cachedGames.clear();
     const checkTotalsAssert = (total) => {
         assert.equal(TotalSequenceChecker.calcSeqCount(Array.from(cachedGames.values())), total);

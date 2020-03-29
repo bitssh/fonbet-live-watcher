@@ -8,7 +8,15 @@ const getLastLine = require('./fileTools.js').getLastLine;
 require('colors');
 
 const rlFootballSportID = 44955;
-// const rlHockeySportID = 48138;
+const rlHockeySportID = 48138;
+const rlBasketballSportID = 54698;
+const watchSportIDList = [rlFootballSportID, rlHockeySportID, rlBasketballSportID];
+const sportNameByID = {
+    [rlFootballSportID]: 'Футбол',
+    [rlHockeySportID]: 'Хоккей',
+    [rlBasketballSportID]: 'Баскетбол',
+};
+
 
 function hasScore(list, score) {
     const reversedScore = () => score.split(':').reverse().join(':');
@@ -21,12 +29,11 @@ exports.liveWatcher = {
     subDomains: ['line11', 'line12', 'line16', 'line31'],
     lastPacketVersion: 0,
     games: new Map,
-    sportsIDs: new Set,
     cachedGames: new Map(),
     getFetchTimeout() {
         return config.useDummyUrl ? 100 : 2000;
     },
-    lastCSVLine: [null, null],
+    lastCSVLine: {},
 
     async fetchUpdates() {
         let url = (() => {
@@ -58,13 +65,7 @@ exports.liveWatcher = {
 
         this.lastPacketVersion = responseData.packetVersion;
 
-        let rocketLeague = responseData.sports.find(sport => sport.name === "Rocket League");
-        if (rocketLeague)
-            for (let sport of responseData.sports.filter(sport => sport.parentId === rocketLeague.id)) {
-                this.sportsIDs.add(sport.id);
-            }
-
-        let events = responseData.events.filter(event => this.sportsIDs.has(event.sportId));
+        let events = responseData.events.filter(event => watchSportIDList.includes(event.sportId));
         let result = new Set();
         for (let event of events) {
             let cachedGame = this.cachedGames.get(event.id);
@@ -95,10 +96,12 @@ exports.liveWatcher = {
         return result;
     },
     initialize() {
-        for (let bool of [false, true]) {
-            getLastLine(this.getCSVFilename(bool), 1)
+        for (let sportName of ['Футбол', 'Хоккей', 'Баскетбол']) {
+            getLastLine(this.getCSVFilename(sportName), 1)
                 .then((lastLine) => {
-                    this.lastCSVLine[bool] = lastLine.split(';');
+                    if (lastLine) {
+                        this.lastCSVLine[sportName] = lastLine.split(';');
+                    }
                 })
                 .catch((err) => {
                     console.error(err)
@@ -106,8 +109,7 @@ exports.liveWatcher = {
         }
 
     },
-    getCSVFilename (football) {
-        const sportName = football ? 'football' : 'hockey';
+    getCSVFilename (sportName) {
         return `./../csv/${sportName}.csv`;
     },
     async grabUpdates() {
@@ -126,7 +128,9 @@ exports.liveWatcher = {
                 ? ''
                 : new Date(game.miscs.timerUpdateTimestamp * 1000).toLocaleTimeString();
             game.date = new Date(game.event.startTime * 1000).toLocaleDateString();
-            game.isFootball = game.event.sportId === rlFootballSportID;
+            game.isFootball = false; // game.event.sportId === rlFootballSportID;
+            game.sportId = game.event.sportId;
+            game.sportName = sportNameByID[game.sportId];
 
             if (config.fileWritingEnabled) {
                 this.appendToFile(game);
@@ -144,11 +148,11 @@ exports.liveWatcher = {
     appendToFile(game) {
         let csvRow = [game.now, game.event.name.replace('Матч', 'Match'), "'" + game.score(), game.timerSeconds];
         let line = csvRow.join(';');
-        let lastLine = this.lastCSVLine[game.isFootball];
+        let lastLine = this.lastCSVLine[game.sportName];
         if (!lastLine || !(csvRow[1] === lastLine[1] && csvRow[2] === lastLine[2])) {
-            this.lastCSVLine[game.isFootball] = null;
+            this.lastCSVLine[game.sportName] = null;
             try {
-                const filename = this.getCSVFilename(game.isFootball);
+                const filename = this.getCSVFilename(game.sportName);
                 const fd = fs.openSync(filename, 'a');
                 try {
                     fs.appendFileSync(fd, line + '\r\n');
@@ -162,12 +166,11 @@ exports.liveWatcher = {
 
     },
     appendToConsole(game) {
-        const games = this.getGames(game.isFootball);
-
+        const games = this.getGames(game.sportId);
 
         if (!game.timerSeconds)
             game.timerSeconds = '   ';
-        const indent = game.isFootball ? '            ' : '';
+        const indent = game.sportName;
 
         let seqStr = this.getSameScoreLastGamesCount(games).count;
         let clnStr = this.getNoGoalsLastGamesCount(games);
@@ -200,8 +203,8 @@ exports.liveWatcher = {
     },
 
     sendNotifications(game) {
-        const games = this.getGames(game.isFootball);
-        const sportName = game.isFootball ? 'Футбол' : 'Хоккей';
+        const games = this.getGames(game.sportId);
+        const sportName = game.sportName;
 
         const sameScores = this.getSameScoreLastGamesCount(games);
 
@@ -220,8 +223,8 @@ exports.liveWatcher = {
         }
 
     },
-    getGames(football) {
-        return Array.from(this.cachedGames.values()).filter((item) => item.isFootball === football);
+    getGames(sportId) {
+        return Array.from(this.cachedGames.values()).filter((item) => item.sportId === sportId);
     },
 
     shrinkCache() {

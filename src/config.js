@@ -14,6 +14,9 @@ exports.common = {
     watchTotalSeqLessThan: 7.5,
     watchTotalSeqCount: 5,
 
+    // Если до 200 секунды сумма голов 8 - прислать уведомление
+    watchTotalCountToSec: 200,
+    watchTotalCount: 8,
 
     cachedGamesSize: 200,
     useDummyUrl: false,

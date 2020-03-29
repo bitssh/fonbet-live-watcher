@@ -20,6 +20,12 @@ class Game {
     get timerSeconds () {
         return this.miscs.timerSeconds;
     }
+    set timerSeconds (value) {
+        if (!this.miscs) {
+            this.miscs = {};
+        }
+        this.miscs.timerSeconds = value;
+    }
     get isFootball () {
         return this.event ? this.event.sportId === rlFootballSportID : true;
     }

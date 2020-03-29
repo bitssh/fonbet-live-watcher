@@ -32,12 +32,6 @@ class EachGameSequenceChecker extends GameSequenceChecker{
         this.games.pop();
         this.lastGame = lastGame;
     }
-    checkCondition () {
-        if (!this.lastGame.isNew()) {
-            return;
-        }
-        return super.checkCondition(this.games);
-    }
     static checkGameCondition () {
         return false;
     }
@@ -54,5 +48,25 @@ class EachGameSequenceChecker extends GameSequenceChecker{
     }
 }
 
+class EachNewGameSequenceChecker extends EachGameSequenceChecker {
+
+    checkCondition () {
+        if (!this.lastGame.isNew()) {
+            return;
+        }
+        return super.checkCondition(this.games);
+    }
+}
+
+class LastGameChecker extends EachGameSequenceChecker {
+    constructor(games, lastGame) {
+        super([lastGame]);
+    }
+}
+
+
+
 exports.GameSequenceChecker = GameSequenceChecker;
 exports.EachGameSequenceChecker = EachGameSequenceChecker;
+exports.EachNewGameSequenceChecker = EachNewGameSequenceChecker;
+exports.LastGameChecker = LastGameChecker;

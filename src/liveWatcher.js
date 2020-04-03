@@ -5,17 +5,11 @@ const config = require("./config.js").common;
 const notifying = require('./notifying.js');
 const Notifier = notifying.Notifier;
 const fileTools = require('./fileTools.js');
+const {getLastLine} = require("./fileTools");
 const {TotalSequenceChecker} = require("./sequenceChecking/TotalSequenceChecker");
 const {GoalsChecker} = require("./sequenceChecking/GoalsChecker");
 const {SameScoreChecker} = require("./sequenceChecking/SameScoreChecker");
 const {NoGoalsChecker} = require("./sequenceChecking/NoGoalsChecker");
-const rlBasketballSportID = 54698;
-const watchSportIDList = [rlFootballSportID, rlHockeySportID, rlBasketballSportID];
-const sportNameByID = {
-    [rlFootballSportID]: 'Футбол',
-    [rlHockeySportID]: 'Хоккей',
-    [rlBasketballSportID]: 'Баскетбол',
-};
 
 const sequenceCheckerClasses = [
     SameScoreChecker,
@@ -42,8 +36,8 @@ exports.liveWatcher = {
         }
 
     },
-    getCSVFilename (sportName) {
-        return `./../csv/${sportName}.csv`;
+    getCSVFilename(sportName) {
+        return `./csv/${sportName}.csv`;
     },
     async grabUpdates() {
         let fetchedGames = await this.gameFetcher.fetchUpdates();
@@ -76,25 +70,24 @@ exports.liveWatcher = {
     },
     appendToConsole(game) {
         const games = this.gameFetcher.cachedGames.getGames(game.sportId);
-        const timerSeconds =  game.timerSeconds ? game.timerSeconds : '   ';
+        const timerSeconds = game.timerSeconds ? game.timerSeconds : '   ';
         const indent = game.sportName;
 
         let seqStr = SameScoreChecker.calcSeqCount(games).count;
         let clnStr = NoGoalsChecker.calcSeqCount(games);
-        seqStr =  + seqStr >= config.watchScoreSeqCount - 1 ? String('S' + seqStr).yellow : '  ';
-        clnStr =  + clnStr >= config.watchNoGoalsCount - 1 ? String('C' + clnStr).yellow : '  ';
+        seqStr = +seqStr >= config.watchScoreSeqCount - 1 ? String('S' + seqStr).yellow : '  ';
+        clnStr = +clnStr >= config.watchNoGoalsCount - 1 ? String('C' + clnStr).yellow : '  ';
 
         let logStr = `${game.now} ${indent}${seqStr} ${clnStr} `
             + `${game.event.id}  ${game.event.name} <${game.score}> ${timerSeconds} ${game.timerUpdate} `;
-        console.log(game.isNew() ? logStr.grey: logStr );
+        console.log(game.isNew() ? logStr.grey : logStr);
 
     },
 
     checkSequences(game) {
-        const games = this.gameFetcher.cachedGames.getGames(game.isFootball);
+        const games = this.gameFetcher.cachedGames.getGames(game.sportId);
 
-        const sportName = game.isFootball ? 'Футбол' : 'Хоккей';
-        const notifier  = new Notifier(sportName, game.event ? game.event.name : '');
+        const notifier = new Notifier(game.sportName, game.event ? game.event.name : '');
 
         for (let SequenceCheckerClass of sequenceCheckerClasses) {
             const sequenceChecker = new SequenceCheckerClass(games, game);

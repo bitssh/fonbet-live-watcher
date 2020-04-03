@@ -23,6 +23,21 @@ exports.common = {
     fileWritingEnabled: true,
 };
 
+const sports = {
+    footballId: 44955,
+    hockeyId: 48138,
+    basketballId: 54698,
+};
+exports.watchSports = sports;
+
+exports.sportNameByID = {
+    [sports.footballId]: 'Футбол',
+    [sports.hockeyId]: 'Хоккей',
+    [sports.basketballId]: 'Баскетбол',
+};
+
+
+
 exports.mail = {
     host: 'smtp.yandex.ru',
         port: 465,

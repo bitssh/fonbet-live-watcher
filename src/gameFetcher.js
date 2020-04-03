@@ -2,6 +2,7 @@ const Game = require("./game").Game;
 const GameMap = require("./game").GameMap;
 const config = require("./config.js").common;
 const fetch = require('node-fetch');
+const {sportNameByID} = require("./config");
 
 exports.gameFetcher = {
     subDomains: ['line11', 'line12', 'line16', 'line31'],
@@ -49,7 +50,8 @@ exports.gameFetcher = {
                 this.sportsIDs.add(sport.id);
             }
 
-        let events = responseData.events.filter(event => this.sportsIDs.has(event.sportId));
+        let events = responseData.events.filter(event => event.sportId in sportNameByID);
+
         let result = new Set();
         for (let event of events) {
             let cachedGame = this.cachedGames.get(event.id);

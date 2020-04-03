@@ -2,6 +2,7 @@
 // https://www.fonbet.ru/#!/live/rocket-league
 
 const config = require("./config.js").common;
+const {sportInfoByID} = require("./config");
 const notifying = require('./notifying.js');
 const Notifier = notifying.Notifier;
 const fileTools = require('./fileTools.js');
@@ -34,7 +35,6 @@ exports.liveWatcher = {
                     console.error(err)
                 })
         }
-
     },
     getCSVFilename(sportName) {
         return `./csv/${sportName}.csv`;
@@ -71,15 +71,18 @@ exports.liveWatcher = {
     appendToConsole(game) {
         const games = this.gameFetcher.cachedGames.getGames(game.sportId);
         const timerSeconds = game.timerSeconds ? game.timerSeconds : '   ';
-        const indent = game.sportName;
+        const sportName = game.sportName.padEnd(10, ' ');
 
         let seqStr = SameScoreChecker.calcSeqCount(games).count;
         let clnStr = NoGoalsChecker.calcSeqCount(games);
         seqStr = +seqStr >= config.watchScoreSeqCount - 1 ? String('S' + seqStr).yellow : '  ';
         clnStr = +clnStr >= config.watchNoGoalsCount - 1 ? String('C' + clnStr).yellow : '  ';
 
-        let logStr = `${game.now} ${indent}${seqStr} ${clnStr} `
+        let logStr = `${game.now} ${sportName}${seqStr} ${clnStr} `
             + `${game.event.id}  ${game.event.name} <${game.score}> ${timerSeconds} ${game.timerUpdate} `;
+
+        const colorName = sportInfoByID[game.sportId].color;
+        logStr = logStr[colorName];
         console.log(game.isNew() ? logStr.grey : logStr);
 
     },

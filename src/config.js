@@ -23,28 +23,35 @@ exports.common = {
     fileWritingEnabled: true,
 };
 
-const sports = {
-    footballId: 44955,
-    hockeyId: 48138,
-    basketballId: 54698,
+const sportsIds = {
+    football: 44955,
+    hockey: 48138,
+    basketball: 54698,
 };
-exports.watchSports = sports;
+exports.watchSportsIds = sportsIds;
 
-exports.sportNameByID = {
-    [sports.footballId]: 'Футбол',
-    [sports.hockeyId]: 'Хоккей',
-    [sports.basketballId]: 'Баскетбол',
+exports.sportInfoByID = {
+    [sportsIds.football]: {
+        name: 'Футбол',
+        color: 'blue',
+    },
+    [sportsIds.hockey]: {
+        name: 'Хоккей',
+        color: 'yellow',
+    },
+    [sportsIds.basketball]: {
+        name: 'Баскетбол',
+        color: 'green',
+    },
 };
-
-
 
 exports.mail = {
     host: 'smtp.yandex.ru',
-        port: 465,
-        user: 'lshtfum.ashf',
-        pass: 'ololo&trololo',
-        subject: 'Fonbet',
-        recipients: 'ilya0191@ya.ru',
-        from: 'ilya0191 <lshtfum.ashf@ya.ru>',
+    port: 465,
+    user: 'lshtfum.ashf',
+    pass: 'ololo&trololo',
+    subject: 'Fonbet',
+    recipients: 'ilya0191@ya.ru',
+    from: 'ilya0191 <lshtfum.ashf@ya.ru>',
 };
 

@@ -1,5 +1,5 @@
 const {watchSports} = require("./config");
-const {sportNameByID} = require("./config");
+const {sportInfoByID} = require("./config");
 
 class Game {
 
@@ -36,7 +36,7 @@ class Game {
         return this.event.sportId;
     }
     get sportName() {
-        return sportNameByID[this.sportId];
+        return sportInfoByID[this.sportId].name;
     }
     get date() {
         return new Date(this.event.startTime * 1000).toLocaleDateString();

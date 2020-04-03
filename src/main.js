@@ -1,4 +1,5 @@
 const liveWatcher = require('./liveWatcher.js').liveWatcher;
+require("colors");
 
 console.log('initialized');
 liveWatcher.initialize();

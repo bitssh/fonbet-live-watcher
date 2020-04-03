@@ -9,6 +9,13 @@ const {TotalSequenceChecker} = require("./sequenceChecking/TotalSequenceChecker"
 const {GoalsChecker} = require("./sequenceChecking/GoalsChecker");
 const {SameScoreChecker} = require("./sequenceChecking/SameScoreChecker");
 const {NoGoalsChecker} = require("./sequenceChecking/NoGoalsChecker");
+const rlBasketballSportID = 54698;
+const watchSportIDList = [rlFootballSportID, rlHockeySportID, rlBasketballSportID];
+const sportNameByID = {
+    [rlFootballSportID]: 'Футбол',
+    [rlHockeySportID]: 'Хоккей',
+    [rlBasketballSportID]: 'Баскетбол',
+};
 
 const sequenceCheckerClasses = [
     SameScoreChecker,
@@ -18,14 +25,16 @@ const sequenceCheckerClasses = [
 ];
 
 exports.liveWatcher = {
-    lastCSVLine: [null, null],
+    lastCSVLine: {},
     gameFetcher: require("./gameFetcher").gameFetcher,
 
     initialize() {
-        for (let bool of [false, true]) {
-            fileTools.getLastLine(this.getCSVFilename(bool), 1)
+        for (let sportName of ['Футбол', 'Хоккей', 'Баскетбол']) {
+            getLastLine(this.getCSVFilename(sportName), 1)
                 .then((lastLine) => {
-                    this.lastCSVLine[bool] = lastLine.split(';');
+                    if (lastLine) {
+                        this.lastCSVLine[sportName] = lastLine.split(';');
+                    }
                 })
                 .catch((err) => {
                     console.error(err)
@@ -33,9 +42,8 @@ exports.liveWatcher = {
         }
 
     },
-    getCSVFilename (football) {
-        const sportName = football ? 'football' : 'hockey';
-        return `./csv/${sportName}.csv`;
+    getCSVFilename (sportName) {
+        return `./../csv/${sportName}.csv`;
     },
     async grabUpdates() {
         let fetchedGames = await this.gameFetcher.fetchUpdates();
@@ -58,18 +66,18 @@ exports.liveWatcher = {
     },
     appendToFile(game) {
         let csvRow = [game.now, game.event.name.replace('Матч', 'Match'), "'" + game.score, game.timerSeconds];
-        let lastLine = this.lastCSVLine[game.isFootball];
+        let lastLine = this.lastCSVLine[game.sportName];
         if (!lastLine || !(csvRow[1] === lastLine[1] && csvRow[2] === lastLine[2])) {
-            this.lastCSVLine[game.isFootball] = null;
+            this.lastCSVLine[game.sportName] = null;
             const line = csvRow.join(';');
-            fileTools.appendFile(this.getCSVFilename(game.isFootball), line);
+            fileTools.appendFile(this.getCSVFilename(game.sportName), line);
         }
 
     },
     appendToConsole(game) {
-        const games = this.gameFetcher.cachedGames.getGames(game.isFootball);
+        const games = this.gameFetcher.cachedGames.getGames(game.sportId);
         const timerSeconds =  game.timerSeconds ? game.timerSeconds : '   ';
-        const indent = game.isFootball ? '            ' : '';
+        const indent = game.sportName;
 
         let seqStr = SameScoreChecker.calcSeqCount(games).count;
         let clnStr = NoGoalsChecker.calcSeqCount(games);

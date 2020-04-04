@@ -1,7 +1,7 @@
-const {LastGameChecker} = require("./sequenceChecking");
+const {BaseLastGameChecker} = require("./baseSequenceChecking");
 const config = require("../config.js").common;
 
-class LastGameTotalChecker extends LastGameChecker {
+class LastGameTotalChecker extends BaseLastGameChecker {
     get notificationText() {
         return  `до 200 секунды сумма голов 8 ${this.watchTotalSeqLessThan}`;
     }

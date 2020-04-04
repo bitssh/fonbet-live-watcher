@@ -1,4 +1,4 @@
-class GameSequenceChecker {
+class BaseGameSequenceChecker {
     constructor (games) {
         this.games = games.slice();
     }
@@ -25,7 +25,7 @@ class GameSequenceChecker {
     }
 }
 
-class EachGameSequenceChecker extends GameSequenceChecker{
+class BaseEachGameSequenceChecker extends BaseGameSequenceChecker{
 
     constructor(games, lastGame) {
         super(games);
@@ -48,7 +48,7 @@ class EachGameSequenceChecker extends GameSequenceChecker{
     }
 }
 
-class EachNewGameSequenceChecker extends EachGameSequenceChecker {
+class BaseEachNewGameSequenceChecker extends BaseEachGameSequenceChecker {
 
     checkCondition () {
         if (!this.lastGame.isNew()) {
@@ -58,7 +58,7 @@ class EachNewGameSequenceChecker extends EachGameSequenceChecker {
     }
 }
 
-class LastGameChecker extends EachGameSequenceChecker {
+class BaseLastGameChecker extends BaseEachGameSequenceChecker {
     constructor(games, lastGame) {
         super([lastGame]);
     }
@@ -66,7 +66,7 @@ class LastGameChecker extends EachGameSequenceChecker {
 
 
 
-exports.GameSequenceChecker = GameSequenceChecker;
-exports.EachGameSequenceChecker = EachGameSequenceChecker;
-exports.EachNewGameSequenceChecker = EachNewGameSequenceChecker;
-exports.LastGameChecker = LastGameChecker;
+exports.BaseGameSequenceChecker = BaseGameSequenceChecker;
+exports.BaseEachGameSequenceChecker = BaseEachGameSequenceChecker;
+exports.BaseEachNewGameSequenceChecker = BaseEachNewGameSequenceChecker;
+exports.BaseLastGameChecker = BaseLastGameChecker;

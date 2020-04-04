@@ -72,7 +72,6 @@ class BaseLastGameChecker extends BaseEachGameSequenceChecker {
     }
 }
 
-
 const COMPARISON_TYPE = {
     GREATER: 'больше',
     LESS: 'меньше',

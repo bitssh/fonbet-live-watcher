@@ -8,9 +8,8 @@ const Notifier = notifying.Notifier;
 const fileTools = require('./fileTools.js');
 const {getLastLine} = require("./fileTools");
 const {TotalMoreThanChecker, TotalLessThanChecker} = require("./sequenceChecking/totalSequenceCheckers");
-const {GoalsChecker} = require("./sequenceChecking/GoalsChecker");
 const {SameScoreChecker} = require("./sequenceChecking/SameScoreChecker");
-const {NoGoalsChecker} = require("./sequenceChecking/NoGoalsChecker");
+const {NoGoalsChecker, GoalsChecker} = require("./sequenceChecking/goalAvailabilitySequenceCheckers");
 
 const sequenceCheckerClasses = [
     SameScoreChecker,

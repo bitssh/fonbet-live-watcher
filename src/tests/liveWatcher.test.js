@@ -1,13 +1,11 @@
 const liveWatcherModule = require("../liveWatcher.js");
 const liveWatcher = liveWatcherModule.liveWatcher;
-const Game = require("../game").Game;
 const {describe, it} = require("mocha");
 const assert = require("assert");
 const {watchSportsIds} = require("../config");
 const config = require("../config.js").common;
 const notifying = require('../notifying.js');
 const {hasScore} = require("../seriesChecking/SameScoreChecker");
-const {SameScoreChecker} = require("../seriesChecking/SameScoreChecker");
 const cachedGames = liveWatcher.gameFetcher.cachedGames;
 
 let notifications = [];
@@ -59,36 +57,6 @@ it("проверяет вхождение счета в массиве счет�
     assert.equal(hasScore([], '1:1'), false);
 });
 
-
-describe("подсчёт количества последних игр с одинаковым .score", function () {
-    let games = [];
-    config.watchScoreSeq = [];
-    let game1 = new Game(['0:0', '0:1', '0:2']);
-    games.push(game1);
-
-    it("1 игра, результат = 1", () => {
-        assert.equal(SameScoreChecker.calcSeqCount(games).count, 1);
-    });
-    let game2 = new Game(['0:1']);
-    games.push(game2);
-    it("Вторая игра, результат = 1", () => {
-        assert.deepEqual(SameScoreChecker.calcSeqCount(games), {count: 1, score: '0:1'});
-    });
-    it("Задали значения watchScoreSeq, результат = 2", () => {
-        config.watchScoreSeq = ['5:5', '1:0', '6:6'];
-        assert.deepEqual(SameScoreChecker.calcSeqCount(games), {count: 2, score: '0:1'});
-    });
-    it("Последний гол поломал последовательность, результат = 1", () => {
-        game2.scores.push('0:1');
-        game2.scores.push('1:1');
-        assert.deepEqual(SameScoreChecker.calcSeqCount(games).count, 1);
-    });
-    it("Третья игра, 3 серии из 0:1", () => {
-        let game3 = new Game(['1:0']);
-        games.push(game3);
-        assert.deepEqual(SameScoreChecker.calcSeqCount(games), {count: 3, score: '1:0'});
-    });
-});
 
 describe("sendNotifications.notifyAboutNoGoals", function () {
     config.watchNoGoalsCount = 3;

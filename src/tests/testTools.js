@@ -19,6 +19,9 @@ class GameTester {
     assertSeqCountEquals (count) {
         assert.equal(this.calcSeqCount(), count);
     };
+    assertSeqCountDeepEquals (object) {
+        assert.deepEqual(this.calcSeqCount(), object);
+    };
 
     calcSeqCount () {
         return this.checker.calcSeqCount(Array.from(this.cachedGames.values()));

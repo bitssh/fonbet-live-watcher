@@ -1,6 +1,6 @@
 const assert = require("assert");
 
-const {describe, it} = require("mocha");
+const {describe, it, before} = require("mocha");
 const config = require("../config.js").common;
 const {GameTester} = require("./testTools.js");
 const {SameScoreChecker,} = require("../seriesChecking/SameScoreChecker");
@@ -39,15 +39,15 @@ describe("SameScoreChecker", () => {
 describe("sendNotifications.notifyAboutScoreSeq", function () {
     const gameTester = new GameTester(SameScoreChecker);
     let notifications = [];
-    config.watchScoreSeqCount = 3;
     const game = gameTester.push({scores: ['4:4']});
-    it("3 серии и не задан массив очков", () => {
-        config.watchScoreSeq = [];
-        config.watchScoreSeqCount = 3;
-
+    before(() => {
         notifying.Notifier.prototype.sendNotification = (notification) => {
             notifications.push(notification)
         };
+        config.watchScoreSeq = [];
+        config.watchScoreSeqCount = 3;
+    });
+    it("3 серии и не задан массив очков", () => {
 
         gameTester.push({scores: ['4:4']});
         gameTester.push({scores: ['5:5']});

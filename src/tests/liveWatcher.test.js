@@ -1,6 +1,6 @@
 const liveWatcherModule = require("../liveWatcher.js");
 const liveWatcher = liveWatcherModule.liveWatcher;
-const {describe, it} = require("mocha");
+const {describe, it, before} = require("mocha");
 const assert = require("assert");
 const config = require("../config.js").common;
 const notifying = require('../notifying.js');
@@ -50,11 +50,13 @@ describe("sendNotifications.notifyAboutNoGoals", function () {
     const newGame = {scores: ['0:0'], isNew: () => true};
     let notifications = [];
 
-    it("2 матча без голов - без оповещений", () => {
-
+    before(() => {
         notifying.Notifier.prototype.sendNotification = (notification) => {
             notifications.push(notification)
         };
+    });
+
+    it("2 матча без голов - без оповещений", () => {
 
         cachedGames.clear();
         cachedGames.set(0, noGoalGame);

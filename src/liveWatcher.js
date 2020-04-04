@@ -7,7 +7,7 @@ const notifying = require('./notifying.js');
 const Notifier = notifying.Notifier;
 const fileTools = require('./fileTools.js');
 const {getLastLine} = require("./fileTools");
-const {TotalSequenceChecker} = require("./sequenceChecking/TotalSequenceChecker");
+const {TotalMoreThanChecker, TotalLessThanChecker} = require("./sequenceChecking/totalSequenceCheckers");
 const {GoalsChecker} = require("./sequenceChecking/GoalsChecker");
 const {SameScoreChecker} = require("./sequenceChecking/SameScoreChecker");
 const {NoGoalsChecker} = require("./sequenceChecking/NoGoalsChecker");
@@ -16,7 +16,8 @@ const sequenceCheckerClasses = [
     SameScoreChecker,
     NoGoalsChecker,
     GoalsChecker,
-    TotalSequenceChecker,
+    TotalMoreThanChecker,
+    TotalLessThanChecker
 ];
 
 exports.liveWatcher = {

@@ -1,6 +1,6 @@
-const notifier = require('./notifying.js');
+// const notifier = require('./notifying.js');
 
-
+//
 // it("проверка авторизации почтовой учётки на stmp" , function(done){
 //
 //     notifier.sender.sendMail(`test`, true)

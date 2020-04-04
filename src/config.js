@@ -1,18 +1,28 @@
 // noinspection SpellCheckingInspection
 exports.common = {
+    // Подсчёт одинаковых серий голов
     watchScoreSeqCount: 3,
     watchScoreSeq: ['1:1', '2:2', '0:2', '0:3', '0:4'],
 
+    // Подсчёт игр без голов после определённой секунды
     watchNoGoalsCount: 3,
     watchNoGoalsFromSec: 270,
 
+    // Подсчёт игр с голами после определённой секунды
     watchGoalsCount: 3,
     watchGoalsFromSec: 270,
 
     // Подсчёт тоталов в конце матча (итоговая сумма голов)
-    // например: Футбол - тотал меньше 7.5 в 5 матчах подряд
-    watchTotalSeqLessThan: 7.5,
+    // например: Футбол - тотал меньше (больше) 7.5 в 5 матчах подряд
     watchTotalSeqCount: 5,
+    watchTotalSeqLessThan: 7.5,
+    watchTotalSeqMoreThan: 7.5,
+
+    // Подсчёт индивидуальных тоталов
+    // например: Синие - тотал голов больше 3.5 в 6 матчах подряд
+    watchTeamTotalSeqCount: 5,
+    watchTeamTotalSeqLessThan: 3.5,
+    watchTeamTotalSeqMoreThan: 3.5,
 
     // Если до 200 секунды сумма голов 8 - прислать уведомление
     watchTotalCountToSec: 200,
@@ -45,6 +55,7 @@ exports.sportInfoByID = {
     },
 };
 
+// noinspection SpellCheckingInspection
 exports.mail = {
     host: 'smtp.yandex.ru',
     port: 465,

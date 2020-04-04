@@ -11,7 +11,7 @@ const {SameScoreChecker} = require("./sequenceChecking/SameScoreChecker");
 const {NoGoalsChecker} = require("./sequenceChecking/NoGoalsChecker");
 const {GoalsChecker} = require("./sequenceChecking/GoalsChecker");
 const {LastGameTotalChecker} = require("./sequenceChecking/LastGameTotalChecker");
-const {TotalSequenceChecker} = require("./sequenceChecking/TotalSequenceChecker");
+const {TotalMoreThanChecker, TotalLessThanChecker} = require("./sequenceChecking/totalSequenceCheckers");
 const cachedGames = liveWatcher.gameFetcher.cachedGames;
 
 let notifications = [];
@@ -199,10 +199,10 @@ describe("LastGameTotalChecker", function () {
 });
 
 
-describe("TotalSequenceChecker", function () {
+describe("TotalMoreThanChecker", function () {
     cachedGames.clear();
     const checkTotalsAssert = (total) => {
-        assert.equal(TotalSequenceChecker.calcSeqCount(Array.from(cachedGames.values())), total);
+        assert.equal(TotalMoreThanChecker.calcSeqCount(Array.from(cachedGames.values())), total);
     };
     config.watchTotalSeqCount = 3;
     config.watchTotalSeqLessThan = 7.5;
@@ -242,6 +242,45 @@ describe("TotalSequenceChecker", function () {
     });
 });
 
+
+
+describe("TotalLessThanChecker", function () {
+    cachedGames.clear();
+    const checkTotalsAssert = (total) => {
+        assert.equal(TotalLessThanChecker.calcSeqCount(Array.from(cachedGames.values())), total);
+    };
+    config.watchTotalSeqCount = 3;
+    config.watchTotalSeqLessThan = 7.5;
+
+    it("все игры с тоталом больше 7.5, результат 0", () => {
+        cachedGames.clear();
+        pushGame({scores: ['11:7']});
+        pushGame({scores: ['3:5']});
+        pushGame({scores: ['6:2']});
+        pushGame({scores: ['4:4']});
+        checkTotalsAssert(0);
+    });
+    it("тотал меньше 7.5 максимум в двух играх подряд - результат 0 ", () => {
+        pushGame({scores: ['1:0']});
+        pushGame({scores: ['0:5']});
+        pushGame({scores: ['0:8']});
+        checkTotalsAssert(0);
+        pushGame({scores: ['3:4']});
+        pushGame({scores: ['0:0']});
+        pushGame({scores: ['11:11']});
+        checkTotalsAssert(0);
+    });
+    it("тотал меньше 7.5 в трех играх подряд - результат 3", () => {
+        pushGame({scores: ['6:1']});
+        pushGame({scores: ['0:0']});
+        pushGame({scores: ['1:1']});
+        checkTotalsAssert(3);
+    });
+    it("в следующей игре тотал больше 7.5 - результат 0", () => {
+        pushGame({scores: ['4:4']});
+        checkTotalsAssert(0);
+    });
+});
 
 describe("sendNotifications.notifyAboutNoGoals", function () {
     config.watchNoGoalsCount = 3;

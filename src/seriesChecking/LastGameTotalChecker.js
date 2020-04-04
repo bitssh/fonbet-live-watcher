@@ -1,4 +1,4 @@
-const {BaseLastGameChecker} = require("./baseSequenceChecking");
+const {BaseLastGameChecker} = require("./baseSeriesChecking");
 const config = require("../config.js").common;
 
 class LastGameTotalChecker extends BaseLastGameChecker {

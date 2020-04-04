@@ -1,7 +1,7 @@
 const {describe, it} = require("mocha");
 const config = require("../config.js").common;
 const {GameTester} = require("./testTools.js");
-const {TotalMoreThanChecker, TotalLessThanChecker} = require("../sequenceChecking/totalSequenceCheckers");
+const {TotalMoreThanChecker, TotalLessThanChecker} = require("../seriesChecking/totalSeriesCheckers");
 
 config.watchTotalSeqCount = 3;
 config.watchTotalSeqLessThan = 7.5;

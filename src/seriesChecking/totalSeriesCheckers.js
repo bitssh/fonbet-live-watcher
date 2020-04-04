@@ -1,7 +1,7 @@
-const {BaseTotalSequenceChecker, COMPARISON_TYPE} = require("./baseSequenceChecking");
+const {BaseTotalSeriesChecker, COMPARISON_TYPE} = require("./baseSeriesChecking");
 const config = require("../config.js").common;
 
-class TotalMoreThanChecker extends BaseTotalSequenceChecker {
+class TotalMoreThanChecker extends BaseTotalSeriesChecker {
     static get totalValueCondition() {
         return config.watchTotalSeqMoreThan;
     }
@@ -10,7 +10,7 @@ class TotalMoreThanChecker extends BaseTotalSequenceChecker {
     }
 }
 
-class TotalLessThanChecker extends BaseTotalSequenceChecker {
+class TotalLessThanChecker extends BaseTotalSeriesChecker {
     static get totalValueCondition() {
         return config.watchTotalSeqLessThan;
     }

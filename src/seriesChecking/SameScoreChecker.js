@@ -1,4 +1,4 @@
-const {BaseGameSequenceChecker} = require("./baseSequenceChecking");
+const {BaseGameSeriesChecker} = require("./baseSeriesChecking");
 const config = require("../config.js").common;
 
 const reversedScore = (score) => score.split(':').reverse().join(':');
@@ -7,7 +7,7 @@ function hasScore(list, score) {
     return list.includes(score) || list.includes(reversedScore(score));
 }
 
-class SameScoreChecker extends BaseGameSequenceChecker {
+class SameScoreChecker extends BaseGameSeriesChecker {
     get seqCountTrigger () {
         return config.watchScoreSeqCount;
     }

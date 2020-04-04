@@ -1,8 +1,8 @@
-const {BaseTotalSequenceChecker} = require("./baseSequenceChecking");
+const {BaseTotalSeriesChecker} = require("./baseSeriesChecking");
 const config = require("../config.js").common;
-const {COMPARISON_TYPE} = require("./baseSequenceChecking");
+const {COMPARISON_TYPE} = require("./baseSeriesChecking");
 
-class BaseTeamTotalSequenceChecker extends BaseTotalSequenceChecker {
+class BaseTeamTotalSeriesChecker extends BaseTotalSeriesChecker {
     static get teamNumber() {
         this.throwMethodNotImplementedError();
     }
@@ -17,7 +17,7 @@ class BaseTeamTotalSequenceChecker extends BaseTotalSequenceChecker {
     }
 }
 
-class BaseTeamScoreLessThanChecker extends BaseTeamTotalSequenceChecker {
+class BaseTeamScoreLessThanChecker extends BaseTeamTotalSeriesChecker {
     static get totalValueCondition() {
         return config.watchTeamTotalSeqLessThan;
     }
@@ -26,7 +26,7 @@ class BaseTeamScoreLessThanChecker extends BaseTeamTotalSequenceChecker {
     }
 }
 
-class BaseTeamScoreMoreThanChecker extends BaseTeamTotalSequenceChecker {
+class BaseTeamScoreMoreThanChecker extends BaseTeamTotalSeriesChecker {
     static get totalValueCondition() {
         return config.watchTeamTotalSeqMoreThan;
     }

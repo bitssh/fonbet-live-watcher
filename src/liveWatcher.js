@@ -7,11 +7,11 @@ const notifying = require('./notifying.js');
 const Notifier = notifying.Notifier;
 const fileTools = require('./fileTools.js');
 const {getLastLine} = require("./fileTools");
-const {TotalMoreThanChecker, TotalLessThanChecker} = require("./sequenceChecking/totalSequenceCheckers");
-const {SameScoreChecker} = require("./sequenceChecking/SameScoreChecker");
-const {NoGoalsChecker, GoalsChecker} = require("./sequenceChecking/goalAvailabilitySequenceCheckers");
+const {TotalMoreThanChecker, TotalLessThanChecker} = require("./seriesChecking/totalSeriesCheckers");
+const {SameScoreChecker} = require("./seriesChecking/SameScoreChecker");
+const {NoGoalsChecker, GoalsChecker} = require("./seriesChecking/goalAvailabilitySeriesCheckers");
 
-const sequenceCheckerClasses = [
+const seriesCheckerClasses = [
     SameScoreChecker,
     NoGoalsChecker,
     GoalsChecker,
@@ -55,7 +55,7 @@ exports.liveWatcher = {
                 this.appendToFile(game);
             }
             this.appendToConsole(game);
-            this.checkSequences(game);
+            this.checkSeriess(game);
         }
     },
     appendToFile(game) {
@@ -87,15 +87,15 @@ exports.liveWatcher = {
 
     },
 
-    checkSequences(game) {
+    checkSeriess(game) {
         const games = this.gameFetcher.cachedGames.getGames(game.sportId);
 
         const notifier = new Notifier(game.sportName, game.event ? game.event.name : '');
 
-        for (let SequenceCheckerClass of sequenceCheckerClasses) {
-            const sequenceChecker = new SequenceCheckerClass(games, game);
-            if (sequenceChecker.checkCondition(games, game)) {
-                sequenceChecker.sendNotification(notifier);
+        for (let SeriesCheckerClass of seriesCheckerClasses) {
+            const seriesChecker = new SeriesCheckerClass(games, game);
+            if (seriesChecker.checkCondition(games, game)) {
+                seriesChecker.sendNotification(notifier);
             }
         }
     },

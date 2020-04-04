@@ -1,6 +1,6 @@
 const config = require("../config.js").common;
 
-class BaseGameSequenceChecker {
+class BaseGameSeriesChecker {
     constructor (games) {
         this.games = games.slice();
     }
@@ -33,7 +33,7 @@ class BaseGameSequenceChecker {
 
 }
 
-class BaseEachGameSequenceChecker extends BaseGameSequenceChecker{
+class BaseEachGameSeriesChecker extends BaseGameSeriesChecker{
 
     constructor(games, lastGame) {
         super(games);
@@ -56,7 +56,7 @@ class BaseEachGameSequenceChecker extends BaseGameSequenceChecker{
     }
 }
 
-class BaseEachNewGameSequenceChecker extends BaseEachGameSequenceChecker {
+class BaseEachNewGameSeriesChecker extends BaseEachGameSeriesChecker {
 
     checkCondition () {
         if (!this.lastGame.isNew()) {
@@ -66,7 +66,7 @@ class BaseEachNewGameSequenceChecker extends BaseEachGameSequenceChecker {
     }
 }
 
-class BaseLastGameChecker extends BaseEachGameSequenceChecker {
+class BaseLastGameChecker extends BaseEachGameSeriesChecker {
     constructor(games, lastGame) {
         super([lastGame]);
     }
@@ -77,7 +77,7 @@ const COMPARISON_TYPE = {
     LESS: 'меньше',
 };
 
-class BaseTotalSequenceChecker extends BaseEachNewGameSequenceChecker {
+class BaseTotalSeriesChecker extends BaseEachNewGameSeriesChecker {
     static get totalValueComparisonOperatorType() {
         this.throwMethodNotImplementedError();
     }
@@ -101,9 +101,9 @@ class BaseTotalSequenceChecker extends BaseEachNewGameSequenceChecker {
     }
 }
 
-exports.BaseGameSequenceChecker = BaseGameSequenceChecker;
-exports.BaseEachGameSequenceChecker = BaseEachGameSequenceChecker;
-exports.BaseEachNewGameSequenceChecker = BaseEachNewGameSequenceChecker;
+exports.BaseGameSeriesChecker = BaseGameSeriesChecker;
+exports.BaseEachGameSeriesChecker = BaseEachGameSeriesChecker;
+exports.BaseEachNewGameSeriesChecker = BaseEachNewGameSeriesChecker;
 exports.BaseLastGameChecker = BaseLastGameChecker;
-exports.BaseTotalSequenceChecker = BaseTotalSequenceChecker;
+exports.BaseTotalSeriesChecker = BaseTotalSeriesChecker;
 exports.COMPARISON_TYPE = COMPARISON_TYPE;

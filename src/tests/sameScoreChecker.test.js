@@ -34,6 +34,9 @@ describe("SameScoreChecker", () => {
         game = gameTester.push({scores: ['1:0']});
         gameTester.assertSeqCountDeepEquals({count: 3, score: '1:0'});
     });
+    it("проверка текста оповещения", () => {
+        gameTester.assertNotificationText('серия из 3 матчей 1:0');
+    });
 });
 
 describe("sendNotifications.notifyAboutScoreSeq", function () {

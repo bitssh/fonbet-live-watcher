@@ -41,6 +41,9 @@ describe("TotalMoreThanChecker", function () {
         gameTester.push({scores: ['3:4']});
         gameTester.assertSeqCountEquals(0);
     });
+    it("проверка текста оповещения", () => {
+        gameTester.assertNotificationText('тотал больше 7.5 в 0 матчах подряд');
+    });
 });
 
 describe("Team1ScoreLessThanChecker", () => {

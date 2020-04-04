@@ -9,14 +9,13 @@ const {checkConditionsAndSendNotifications} = require("../liveWatcher");
 
 const cachedGames = liveWatcher.gameFetcher.cachedGames;
 
-config.watchNoGoalsCount = 3;
-config.watchNoGoalsFromSec = 270;
-config.watchGoalsCount = 3;
-config.watchGoalsFromSec = 270;
-
 describe("NoGoalSeriesChecker", function () {
     const gameTester = new GameTester(NoGoalSeriesChecker);
 
+    before(() => {
+        config.watchNoGoalsCount = 3;
+        config.watchNoGoalsFromSec = 250;
+    });
     it("нет игр - 0 игр без голов", () => {
         gameTester.assertSeqCountEquals(0);
     });
@@ -30,7 +29,7 @@ describe("NoGoalSeriesChecker", function () {
         gameTester.assertSeqCountEquals(0);
     });
     it("в последней игре был гол, но не вконце - значит 1 последняя игра без голов", () => {
-        gameTester.push({scores: ['4:4'], timerSeconds: 269});
+        gameTester.push({scores: ['4:4'], timerSeconds: 249});
         gameTester.assertSeqCountEquals(1);
     });
     it("гол в конце игры и последующие 3 игры без голов", () => {
@@ -40,18 +39,27 @@ describe("NoGoalSeriesChecker", function () {
         gameTester.push({scores: ['5:5'], timerSeconds: 1});
         gameTester.assertSeqCountEquals(3);
     });
+    it("проверка текста оповещения", () => {
+        gameTester.assertNotificationText('нет голов в 3 матчах с 250 секунды');
+    });
+
 });
 
 
 describe("GoalSeriesChecker", function () {
     const gameTester = new GameTester(GoalSeriesChecker);
 
+    before(() => {
+        config.watchGoalsCount = 3;
+        config.watchGoalsFromSec = 250;
+    });
     it("нет игр - 0 игр с голами", () => {
         gameTester.assertSeqCountEquals(0);
     });
     it("две игры с голами", () => {
+
         gameTester.push({scores: ['4:4'], timerSeconds: 290});
-        gameTester.push({scores: ['4:4'], timerSeconds: 270});
+        gameTester.push({scores: ['4:4'], timerSeconds: 250});
         gameTester.assertSeqCountEquals(2);
     });
     it("в последней игре не было гола  - значит 0 последних игр с голами", () => {
@@ -59,23 +67,24 @@ describe("GoalSeriesChecker", function () {
         gameTester.assertSeqCountEquals(0);
     });
     it("в последней игре был гол в конце - значит 1 последняя игра с голами", () => {
-        gameTester.push({scores: ['4:4'], timerSeconds: 272});
+        gameTester.push({scores: ['4:4'], timerSeconds: 252});
         gameTester.assertSeqCountEquals(1);
     });
     it("1 игра без голов и последующие 3 игры с голами", () => {
         gameTester.push({scores: ['4:4'], timerSeconds: 1});
-        gameTester.push({scores: ['5:5'], timerSeconds: 270});
+        gameTester.push({scores: ['5:5'], timerSeconds: 250});
         gameTester.push({scores: ['5:5'], timerSeconds: 300});
         gameTester.push({scores: ['5:5'], timerSeconds: 300});
         gameTester.assertSeqCountEquals(3);
+    });
+    it("проверка текста оповещения", () => {
+        gameTester.assertNotificationText('голы в 3 матчах с 250 секунды');
     });
 });
 
 
 
 describe("sendNotifications.notifyAboutNoGoals", function () {
-    config.watchNoGoalsCount = 3;
-    config.watchNoGoalsFromSec = 270;
     cachedGames.clear();
     const noGoalGame = {timerSeconds: 1, isNew: () => false};
     const goalGame = {timerSeconds: 270, isNew: () => false};
@@ -83,6 +92,8 @@ describe("sendNotifications.notifyAboutNoGoals", function () {
     let notifications = [];
 
     before(() => {
+        config.watchNoGoalsCount = 3;
+        config.watchNoGoalsFromSec = 270;
         BaseGameSeriesChecker.prototype.sendNotification = function () {
             notifications.push(this);
         };

@@ -34,4 +34,7 @@ describe("LastGameTotalChecker", function () {
         game.timerSeconds = 210;
         gameTester.assertSeqCountEquals(0);
     });
+    it("проверка текста оповещения", () => {
+        gameTester.assertNotificationText('до 200 секунды сумма голов 8 undefined');
+    });
 });

@@ -10,7 +10,7 @@ class BaseTeamTotalSeriesChecker extends BaseTotalSeriesChecker {
         return config.watchTeamTotalSeqCount;
     }
     get notificationText() {
-        return `${this.constructor.teamNumber} команда - ${super.notificationText}`;
+        return `${this.constructor.teamNumber + 1} команда - ${super.notificationText}`;
     }
     static getCurrentTotal(game) {
         return game.getTeamScore(this.teamNumber);

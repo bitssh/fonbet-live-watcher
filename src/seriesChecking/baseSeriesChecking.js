@@ -2,51 +2,55 @@ const {sendNotification} = require("../notifying");
 const config = require("../config.js").common;
 
 class BaseGameSeriesChecker {
-    constructor (games) {
+    constructor(games) {
         this.games = games.slice();
     }
-    static calcSeqCount () {
-        return 0;
-    }
-    get seqCount () {
+    get seqCount() {
         if (!this._seqCount) {
             this._seqCount = this.constructor.calcSeqCount(this.games);
         }
         return this._seqCount;
     }
-    get seqCountTrigger () {
+    get seqCountTrigger() {
         return 1;
     }
-    get lastGame () {
+    get lastGame() {
         return this.games[this.games.length - 1];
     }
-    get notificationText () {
+    get notificationText() {
         this.constructor.throwMethodNotImplementedError();
     }
-    sendNotification () {
-        let {sportName, matchName} = this.lastGame;
-        sendNotification(sportName, matchName, this.notificationText);
-    }
-    checkCondition () {
-        return this.seqCount >= this.seqCountTrigger;
+    static calcSeqCount() {
+        return 0;
     }
     static throwMethodNotImplementedError() {
         // noinspection JSUnresolvedVariable
-        throw new Error (`some of ${this.name} class method is not implemented`);
+        throw new Error(`some of ${this.name} class method is not implemented`);
+    }
+    sendNotification() {
+        let {sportName, matchName} = this.lastGame;
+        sendNotification({
+            sportName,
+            matchName,
+            text: this.notificationText
+        });
+    }
+    checkCondition() {
+        return this.seqCount >= this.seqCountTrigger;
     }
 }
 
-class BaseEachGameSeriesChecker extends BaseGameSeriesChecker{
+class BaseEachGameSeriesChecker extends BaseGameSeriesChecker {
 
     constructor(games) {
         super(games);
         this._lastGame = this.games.pop();
     }
-    static checkGameCondition () {
-        return false;
-    }
-    get lastGame () {
+    get lastGame() {
         return this._lastGame;
+    }
+    static checkGameCondition() {
+        return false;
     }
     static calcSeqCount(games) {
         let count = 0;
@@ -63,7 +67,7 @@ class BaseEachGameSeriesChecker extends BaseGameSeriesChecker{
 
 class BaseEachNewGameSeriesChecker extends BaseEachGameSeriesChecker {
 
-    checkCondition () {
+    checkCondition() {
         // FIXME
         if (this.lastGame.isNew && !this.lastGame.isNew()) {
             return;
@@ -87,18 +91,18 @@ class BaseTotalSeriesChecker extends BaseEachNewGameSeriesChecker {
     static get totalValueComparisonOperatorType() {
         this.throwMethodNotImplementedError();
     }
+    static get totalValueCondition() {
+        this.throwMethodNotImplementedError();
+    }
     get seqCountTrigger() {
         return config.watchTotalSeqCount;
     }
     get notificationText() {
-        return `тотал ${this.constructor.totalValueComparisonOperatorType} 
-        ${this.watchTotalSeqMoreThan} в ${this.seqCount} матчах подряд`;
+        return `тотал ${this.constructor.totalValueComparisonOperatorType} ${this.constructor.totalValueCondition}` +
+            ` в ${this.seqCount} матчах подряд`;
     }
     static getCurrentTotal(game) {
         return game.total;
-    }
-    static get totalValueCondition() {
-        this.throwMethodNotImplementedError();
     }
     static checkGameCondition(game) {
         return (this.totalValueComparisonOperatorType) === COMPARISON_TYPE.GREATER

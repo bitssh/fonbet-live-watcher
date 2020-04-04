@@ -12,7 +12,7 @@ class SameScoreChecker extends BaseGameSeriesChecker {
         return config.watchScoreSeqCount;
     }
     get notificationText() {
-        return `серия из ${this.seqCount} матчей ${this.seqCount.score}`;
+        return `серия из ${this.seqCount.count} матчей ${this.seqCount.score}`;
     }
     static calcSeqCount(games) {
         let count = 1;

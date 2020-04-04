@@ -4,9 +4,14 @@ const assert = require("assert");
 
 class GameTester {
 
-    constructor (checker) {
+    /**
+     *
+     * @param checkerClass
+     */
+    constructor (checkerClass) {
         this.cachedGames = new GameMap();
-        this.checker = checker;
+        this.checkerClass = checkerClass;
+        this.checker = new checkerClass([]);
     }
 
     push(game, sportId = watchSportsIds.football) {
@@ -14,18 +19,22 @@ class GameTester {
         result.sportId = sportId;
         result.scores = game.scores;
         result.timerSeconds = game.timerSeconds;
+        this.checker.games.push(result);
         return result;
+    }
+    calcSeqCount () {
+        return this.checkerClass.calcSeqCount(Array.from(this.cachedGames.values()));
     }
     assertSeqCountEquals (count) {
         assert.equal(this.calcSeqCount(), count);
-    };
+    }
     assertSeqCountDeepEquals (object) {
         assert.deepEqual(this.calcSeqCount(), object);
-    };
-
-    calcSeqCount () {
-        return this.checker.calcSeqCount(Array.from(this.cachedGames.values()));
     }
+    assertNotificationText(text) {
+        assert.equal(this.checker.notificationText, text);
+    }
+
 
 }
 

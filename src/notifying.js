@@ -2,8 +2,10 @@
 const mail = require("./config.js").mail;
 const nodemailer = require('nodemailer');
 
-let sender = {
-    sendMail: async function (message, test) {
+
+
+let mailSender = {
+    send: async function (message, test) {
         let transporter = nodemailer.createTransport({
             host: mail.host,
             port: mail.port,
@@ -27,13 +29,13 @@ let sender = {
 };
 
 function sendNotification({sportName, matchName, text}) {
-    text = `${sportName} - ${text}` + (matchName ? `, ${this.matchName}` : '');
-    sender.sendMail(text)
+    text = `${sportName} - ${text}` + (matchName ? `, ${matchName}` : '');
+    mailSender.send(text)
         .then((info) => console.log('Message sent: '.green + `${text} ${info.messageId} `))
         .catch(err => console.error(text + ' ' + err.message.red));
 }
 
-exports.sender = sender;
+exports.mailSender = mailSender;
 exports.sendNotification = sendNotification;
 
 

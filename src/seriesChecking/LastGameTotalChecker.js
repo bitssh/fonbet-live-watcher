@@ -3,7 +3,7 @@ const config = require("../config.js").common;
 
 class LastGameTotalChecker extends BaseLastGameChecker {
     get notificationText() {
-        return  `до 200 секунды сумма голов 8 ${this.watchTotalSeqLessThan}`;
+        return  `до ${config.watchTotalCountToSec} секунды сумма голов ${config.watchTotalCount}`;
     }
     static checkGameCondition(game) {
         return (game.timerSeconds < config.watchTotalCountToSec)

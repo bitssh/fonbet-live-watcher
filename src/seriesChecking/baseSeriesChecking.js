@@ -25,7 +25,7 @@ class BaseGameSeriesChecker {
     }
     static throwMethodNotImplementedError() {
         // noinspection JSUnresolvedVariable
-        throw new Error(`some of ${this.name} class method is not implemented`);
+        throw new Error(`some of ${this.name} class methods is not implemented`);
     }
     sendNotification() {
         let {sportName, matchName} = this.lastGame;
@@ -35,6 +35,7 @@ class BaseGameSeriesChecker {
             text: this.notificationText
         });
     }
+    // TODO написать тесты этого метода вместо переопределения sendNotification
     checkCondition() {
         return this.seqCount >= this.seqCountTrigger;
     }
@@ -77,9 +78,13 @@ class BaseEachNewGameSeriesChecker extends BaseEachGameSeriesChecker {
 }
 
 class BaseLastGameChecker extends BaseEachGameSeriesChecker {
-    constructor(games, lastGame) {
-        super([lastGame]);
+    constructor(games) {
+        super(games);
+        this.games = [this.lastGame];
     }
+    // constructor(games, lastGame) {
+    //     super([lastGame]);
+    // }
 }
 
 const COMPARISON_TYPE = {

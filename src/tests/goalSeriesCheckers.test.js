@@ -1,4 +1,4 @@
-const {describe, it, before} = require("mocha");
+const {describe, it, before, after} = require("mocha");
 const {liveWatcher} = require("../liveWatcher.js");
 const assert = require("assert");
 const config = require("../config.js").common;
@@ -90,13 +90,18 @@ describe("sendNotifications.notifyAboutNoGoals", function () {
     const goalGame = {timerSeconds: 270, isNew: () => false};
     const newGame = {scores: ['0:0'], isNew: () => true};
     let notifications = [];
-
+    let sendNotificationFuncBackup;
     before(() => {
         config.watchNoGoalsCount = 3;
         config.watchNoGoalsFromSec = 270;
+
+        sendNotificationFuncBackup = BaseGameSeriesChecker.prototype.sendNotification;
         BaseGameSeriesChecker.prototype.sendNotification = function () {
             notifications.push(this);
         };
+    });
+    after(() => {
+        BaseGameSeriesChecker.prototype.sendNotification = sendNotificationFuncBackup;
     });
 
     it("2 матча без голов - без оповещений", () => {
@@ -135,7 +140,6 @@ describe("sendNotifications.notifyAboutNoGoals", function () {
         checkConditionsAndSendNotifications(cachedGames, newGame);
         assert.equal(notifications.length, 1);
         assert.equal(notifications[0].seqCount, 5);
-        notifications = [];
     });
     it("делаем 2й матч с голом, в итоге 3 матчей без голов и новый матч - оповещение", () => {
         notifications = [];

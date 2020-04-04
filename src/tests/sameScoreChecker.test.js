@@ -1,6 +1,6 @@
 const assert = require("assert");
 
-const {describe, it, before} = require("mocha");
+const {describe, it, before, after} = require("mocha");
 const config = require("../config.js").common;
 const {GameTester} = require("./testTools.js");
 const {SameScoreChecker,} = require("../seriesChecking/SameScoreChecker");
@@ -42,16 +42,20 @@ describe("SameScoreChecker", () => {
 describe("sendNotifications.notifyAboutScoreSeq", function () {
     const gameTester = new GameTester(SameScoreChecker);
     let notifications = [];
+    let sendNotificationFuncBackup;
     const game = gameTester.push({scores: ['4:4']});
     before(() => {
+        sendNotificationFuncBackup = BaseGameSeriesChecker.prototype.sendNotification;
         BaseGameSeriesChecker.prototype.sendNotification = function () {
             notifications.push(this);
         };
         config.watchScoreSeq = [];
         config.watchScoreSeqCount = 3;
     });
+    after(() => {
+        BaseGameSeriesChecker.prototype.sendNotification = sendNotificationFuncBackup;
+    });
     it("3 серии и не задан массив очков", () => {
-
         gameTester.push({scores: ['4:4']});
         gameTester.push({scores: ['5:5']});
         gameTester.push({scores: ['5:5']});
@@ -79,8 +83,8 @@ describe("sendNotifications.notifyAboutScoreSeq", function () {
     });
     it("добавили 2 матча с другим типом игры - также 4 серии", () => {
         notifications = [];
-        gameTester.push({scores: ['5:5']}, watchSportsIds.hockey);
-        gameTester.push({scores: ['5:5']}, watchSportsIds.hockey);
+        gameTester.push({scores: ['5:5'], sportId: watchSportsIds.hockey});
+        gameTester.push({scores: ['5:5'], sportId: watchSportsIds.hockey});
         checkConditionsAndSendNotifications(gameTester.cachedGames, game);
         assert.deepEqual(notifications[0].seqCount, {count: 4, score: '5:5'});
 

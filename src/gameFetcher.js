@@ -42,6 +42,20 @@ exports.gameFetcher = {
             responseData = await response.json();
         }
 
+
+        return this.parseResponseData(responseData);
+    },
+
+    /**
+     *
+     * @param responseData
+     * @param {number} responseData.packetVersion
+     * @param responseData.sports
+     * @param responseData.events
+     * @param {Array<{score1, score2, id}>} responseData.eventMiscs
+     * @returns {Set<Game>}
+     */
+    parseResponseData(responseData) {
         this.lastPacketVersion = responseData.packetVersion;
 
         let rocketLeague = responseData.sports.find(sport => sport.name === "Rocket League");

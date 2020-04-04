@@ -2,6 +2,7 @@ const liveWatcherModule = require("./liveWatcher.js");
 const liveWatcher = liveWatcherModule.liveWatcher;
 const Game = require("./game").Game;
 const assert = require("assert");
+const {watchSportsIds} = require("./config");
 const config = require("./config.js").common;
 const notifying = require('./notifying.js');
 const {describe, it} = require("mocha");
@@ -22,9 +23,9 @@ notifying.Notifier.prototype.sendNotification = (notification) => {
     notifications.push(notification)
 };
 
-function pushGame(game, footBall = true) {
+function pushGame(game, sportId = watchSportsIds.football) {
     const result = cachedGames.newGame(cachedGames.size);
-    result.isFootball = footBall;
+    result.sportId = sportId;
     result.scores = game.scores;
     result.timerSeconds = game.timerSeconds;
     return result;
@@ -336,16 +337,16 @@ describe("sendNotifications.notifyAboutScoreSeq", function () {
     });
     it("добавили 2 матча с другим типом игры - также 4 серии", () => {
         notifications = [];
-        pushGame({scores: ['5:5']}, false);
-        pushGame({scores: ['5:5']}, false);
+        pushGame({scores: ['5:5']}, watchSportsIds.hockey);
+        pushGame({scores: ['5:5']}, watchSportsIds.hockey);
         liveWatcher.checkSequences(game);
         assert.deepEqual(notifications[0].seqCount, {count: 4, score: '5:5'});
 
     });
     it("изменили 2 последних матча на футбол - оборвали серию", () => {
         notifications = [];
-        cachedGames.set(6, {scores: ['4:4'], isFootball: true});
-        cachedGames.set(7, {scores: ['4:4'], isFootball: true});
+        cachedGames.set(6, {scores: ['4:4'], sportId: watchSportsIds.football});
+        cachedGames.set(7, {scores: ['4:4'], sportId: watchSportsIds.football});
         liveWatcher.checkSequences(game);
         assert.equal(notifications.length, 0);
 

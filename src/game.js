@@ -1,4 +1,3 @@
-const {watchSports} = require("./config");
 const {sportInfoByID} = require("./config");
 
 class Game {
@@ -23,17 +22,14 @@ class Game {
         }
         this.miscs.timerSeconds = value;
     }
-    get isFootball() {
-        return this.event ? this.event.sportId === watchSports.footballId : true;
+    get sportId() {
+        return this.event.sportId;
     }
-    set isFootball(football) {
+    set sportId(val) {
         if (!this.event) {
             this.event = {};
         }
-        this.event.sportId = football ? watchSports.footballId : 0;
-    }
-    get sportId() {
-        return this.event.sportId;
+        this.event.sportId = val;
     }
     get sportName() {
         return sportInfoByID[this.sportId].name;

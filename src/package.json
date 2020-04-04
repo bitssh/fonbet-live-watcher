@@ -5,7 +5,8 @@
     "test": "mocha *.test.js"
   },
   "dependencies": {
-    "colors": "^1.4.0"
+    "colors": "^1.4.0",
+    "node-fetch": "^2.6.0"
   },
   "devDependencies": {
     "mocha": "^6.2.2"

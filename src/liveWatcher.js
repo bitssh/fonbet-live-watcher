@@ -9,12 +9,12 @@ const fileTools = require('./fileTools.js');
 const {getLastLine} = require("./fileTools");
 const {TotalMoreThanChecker, TotalLessThanChecker} = require("./seriesChecking/totalSeriesCheckers");
 const {SameScoreChecker} = require("./seriesChecking/SameScoreChecker");
-const {NoGoalsChecker, GoalsChecker} = require("./seriesChecking/goalAvailabilitySeriesCheckers");
+const {NoGoalSeriesChecker, GoalSeriesChecker} = require("./seriesChecking/goalSeriesCheckers");
 
 const seriesCheckerClasses = [
     SameScoreChecker,
-    NoGoalsChecker,
-    GoalsChecker,
+    NoGoalSeriesChecker,
+    GoalSeriesChecker,
     TotalMoreThanChecker,
     TotalLessThanChecker
 ];
@@ -74,7 +74,7 @@ exports.liveWatcher = {
         const sportName = game.sportName.padEnd(10, ' ');
 
         let seqStr = SameScoreChecker.calcSeqCount(games).count;
-        let clnStr = NoGoalsChecker.calcSeqCount(games);
+        let clnStr = NoGoalSeriesChecker.calcSeqCount(games);
         seqStr = +seqStr >= config.watchScoreSeqCount - 1 ? String('S' + seqStr).yellow : '  ';
         clnStr = +clnStr >= config.watchNoGoalsCount - 1 ? String('C' + clnStr).yellow : '  ';
 

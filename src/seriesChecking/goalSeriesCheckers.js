@@ -1,7 +1,7 @@
 const {BaseEachNewGameSeriesChecker} = require("./baseSeriesChecking");
 const config = require("../config.js").common;
 
-class GoalsChecker extends BaseEachNewGameSeriesChecker {
+class GoalSeriesChecker extends BaseEachNewGameSeriesChecker {
     get seqCountTrigger () {
         return config.watchGoalsCount;
     }
@@ -13,7 +13,7 @@ class GoalsChecker extends BaseEachNewGameSeriesChecker {
     }
 }
 
-class NoGoalsChecker extends BaseEachNewGameSeriesChecker {
+class NoGoalSeriesChecker extends BaseEachNewGameSeriesChecker {
     get seqCountTrigger () {
         return config.watchNoGoalsCount;
     }
@@ -26,5 +26,5 @@ class NoGoalsChecker extends BaseEachNewGameSeriesChecker {
     }
 }
 
-exports.NoGoalsChecker = NoGoalsChecker;
-exports.GoalsChecker = GoalsChecker;
+exports.NoGoalSeriesChecker = NoGoalSeriesChecker;
+exports.GoalSeriesChecker = GoalSeriesChecker;

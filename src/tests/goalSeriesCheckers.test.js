@@ -1,15 +1,15 @@
 const {describe, it} = require("mocha");
 const config = require("../config.js").common;
 const {GameTester} = require("./testTools.js");
-const {NoGoalsChecker, GoalsChecker} = require("../seriesChecking/goalAvailabilitySeriesCheckers");
+const {NoGoalSeriesChecker, GoalSeriesChecker} = require("../seriesChecking/goalSeriesCheckers");
 
 config.watchNoGoalsCount = 3;
 config.watchNoGoalsFromSec = 270;
 config.watchGoalsCount = 3;
 config.watchGoalsFromSec = 270;
 
-describe("NoGoalsChecker", function () {
-    const gameTester = new GameTester(NoGoalsChecker);
+describe("NoGoalSeriesChecker", function () {
+    const gameTester = new GameTester(NoGoalSeriesChecker);
 
     it("нет игр - 0 игр без голов", () => {
         gameTester.checkCountAssert(0);
@@ -37,8 +37,8 @@ describe("NoGoalsChecker", function () {
 });
 
 
-describe("GoalsChecker", function () {
-    const gameTester = new GameTester(GoalsChecker);
+describe("GoalSeriesChecker", function () {
+    const gameTester = new GameTester(GoalSeriesChecker);
 
     it("нет игр - 0 игр с голами", () => {
         gameTester.checkCountAssert(0);

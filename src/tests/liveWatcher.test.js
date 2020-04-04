@@ -57,7 +57,6 @@ describe("sendNotifications.notifyAboutNoGoals", function () {
     });
 
     it("2 матча без голов - без оповещений", () => {
-
         cachedGames.clear();
         cachedGames.set(0, noGoalGame);
         cachedGames.set(1, noGoalGame);

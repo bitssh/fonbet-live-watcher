@@ -20,11 +20,14 @@ const seriesCheckerClasses = [
 ];
 
 function checkConditionsAndSendNotifications (gameMap, lastGame) {
+    if (!lastGame) {
+        lastGame = gameMap.lastGame;
+    }
     const games = gameMap.getGames(lastGame.sportId);
     const notifier = new Notifier(lastGame.sportName, lastGame.event ? lastGame.event.name : '');
 
     for (let SeriesCheckerClass of seriesCheckerClasses) {
-        const seriesChecker = new SeriesCheckerClass(games, lastGame);
+        const seriesChecker = new SeriesCheckerClass(games);
         if (seriesChecker.checkCondition()) {
             seriesChecker.sendNotification(notifier);
         }

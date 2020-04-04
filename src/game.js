@@ -53,7 +53,7 @@ class Game {
 exports.GameMap = class GameMap extends Map {
 
     getGames(sportId) {
-        return Array.from(this.values()).filter((item) => item.sportId === sportId);
+        return this.games.filter((item) => item.sportId === sportId);
     }
     isNew(game) {
         if (game.score !== '0:0')
@@ -66,6 +66,12 @@ exports.GameMap = class GameMap extends Map {
         game.list = this;
         this.set(eventId, game);
         return game;
+    }
+    get games () {
+        return Array.from(this.values());
+    }
+    get lastGame () {
+        return this.games[this.games.length - 1];
     }
 };
 

@@ -16,6 +16,9 @@ class BaseGameSeriesChecker {
     get seqCountTrigger () {
         return 1;
     }
+    get lastGame () {
+        return this.games[this.games.length - 1];
+    }
     get notificationText () {
         this.constructor.throwMethodNotImplementedError();
     }
@@ -29,23 +32,23 @@ class BaseGameSeriesChecker {
         // noinspection JSUnresolvedVariable
         throw new Error (`some of ${this.name} class method is not implemented`);
     }
-
-
 }
 
 class BaseEachGameSeriesChecker extends BaseGameSeriesChecker{
 
-    constructor(games, lastGame) {
+    constructor(games) {
         super(games);
-        this.games.pop();
-        this.lastGame = lastGame;
+        this._lastGame = this.games.pop();
     }
     static checkGameCondition () {
         return false;
     }
+    get lastGame () {
+        return this._lastGame;
+    }
     static calcSeqCount(games) {
         let count = 0;
-        for (let game of games.slice().reverse()) {
+        for (let game of games.reverse()) {
             if (this.checkGameCondition(game)) {
                 count += 1;
             } else {
@@ -59,7 +62,8 @@ class BaseEachGameSeriesChecker extends BaseGameSeriesChecker{
 class BaseEachNewGameSeriesChecker extends BaseEachGameSeriesChecker {
 
     checkCondition () {
-        if (!this.lastGame.isNew()) {
+        // FIXME
+        if (this.lastGame.isNew && !this.lastGame.isNew()) {
             return;
         }
         return super.checkCondition(this.games);

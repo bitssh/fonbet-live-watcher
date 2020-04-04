@@ -5,13 +5,13 @@ const config = require("../config.js").common;
 const {hasScore} = require("../seriesChecking/SameScoreChecker");
 const cachedGames = liveWatcher.gameFetcher.cachedGames;
 
-it("grabUpdates - граббинг тестовых данных", function () {
+it("getAndCheckUpdates - граббинг тестовых данных", function () {
     cachedGames.clear();
     config.fileWritingEnabled = false;
     config.useDummyUrl = true;
-    liveWatcher.grabUpdates();
-    liveWatcher.grabUpdates();
-    liveWatcher.grabUpdates();
+    liveWatcher.getAndCheckUpdates();
+    liveWatcher.getAndCheckUpdates();
+    liveWatcher.getAndCheckUpdates();
     assert.equal(cachedGames.get(16156082).score, '3:0');
     assert.equal(cachedGames.get(16156082).miscs.timerSeconds, 129);
 });

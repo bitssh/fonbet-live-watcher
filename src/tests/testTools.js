@@ -4,10 +4,6 @@ const assert = require("assert");
 
 class GameTester {
 
-    /**
-     *
-     * @param checkerClass
-     */
     constructor(checkerClass) {
         this.cachedGames = new GameMap();
         this.checkerClass = checkerClass;

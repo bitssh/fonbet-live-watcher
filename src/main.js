@@ -1,19 +1,19 @@
 const liveWatcher = require('./liveWatcher.js').liveWatcher;
+const config = require("./config.js").common;
 require("colors");
 
 console.log('initialized');
 liveWatcher.initialize();
-liveWatcher.grabUpdates();
 
-const timerId = setInterval(() => {
-        liveWatcher.grabUpdates().catch((e) => {
-            console.error(e.message.red);
-            if (liveWatcher.useDummyUrl) {
-                clearInterval(timerId)
-            }
-        })
-    },
-    liveWatcher.gameFetcher.getFetchTimeout()
-);
+(async function watch() {
+    try {
+        await liveWatcher.getAndCheckUpdates();
+    } catch (err) {
+        console.error(err.message.red);
+    }
+    if (!liveWatcher.useDummyUrl) {
+        setTimeout(watch, config.fetchTimeout);
+    }
+})();
 
 

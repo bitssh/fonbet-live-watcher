@@ -34,9 +34,6 @@ class Game {
     get sportName() {
         return sportInfoByID[this.sportId].name;
     }
-    get date() {
-        return new Date(this.event.startTime * 1000).toLocaleDateString();
-    }
     get timerUpdate() {
         return !this.miscs.timerUpdateTimestamp
             ? ''

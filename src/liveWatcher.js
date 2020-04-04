@@ -51,7 +51,7 @@ exports.liveWatcher = {
     getCSVFilename(sportName) {
         return `./csv/${sportName}.csv`;
     },
-    async grabUpdates() {
+    async getAndCheckUpdates() {
         let fetchedGames = await this.gameFetcher.fetchUpdates();
         if (!fetchedGames || !fetchedGames.size)
             return;

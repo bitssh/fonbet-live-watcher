@@ -9,6 +9,7 @@
     "node-fetch": "^2.6.0"
   },
   "devDependencies": {
-    "mocha": "^6.2.2"
+    "mocha": "^6.2.2",
+    "nodemailer": "^6.4.6"
   }
 }

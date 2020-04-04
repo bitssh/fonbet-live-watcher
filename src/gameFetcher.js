@@ -10,10 +10,6 @@ exports.gameFetcher = {
     sportsIDs: new Set,
     cachedGames: new GameMap(),
 
-    getFetchTimeout() {
-        return config.useDummyUrl ? 100 : 2000;
-    },
-
     async fetchUpdates() {
         let url = (() => {
             let result;
@@ -35,6 +31,7 @@ exports.gameFetcher = {
             responseData = require(url);
         } else {
             let response = await fetch(url);
+
             if (!response.ok) {
                 console.error(`${new Date().toLocaleString()} ${response.status} - ${await response.text()}`.red);
                 return;
@@ -52,7 +49,7 @@ exports.gameFetcher = {
      * @param {number} responseData.packetVersion
      * @param responseData.sports
      * @param responseData.events
-     * @param {Array<{score1, score2, id}>} responseData.eventMiscs
+     * @param {Array<{score1, score2, id, timerUpdateTimestamp}>} responseData.eventMiscs
      * @returns {Set<Game>}
      */
     parseResponseData(responseData) {

@@ -1,6 +1,6 @@
 const {LastGameTotalChecker} = require("../seriesChecking/LastGameTotalChecker");
 const {GameTester} = require("./testTools");
-const {describe, it, before, after} = require("mocha");
+const {describe, it, before} = require("mocha");
 const assert = require("assert");
 const notifying = require('../notifying.js');
 const {watchSportsIds} = require("../config");
@@ -44,11 +44,6 @@ describe("sendNotification", function () {
         assert.equal(checker.checkCondition(), true);
         checker.sendNotification();
         assert.equal(sentText, 'Хоккей - до 200 секунды сумма голов 8, Красные - зеленые');
-
-        // notifier.sender.sendMail('всё ок', false)
-        //     .then(() => done())
-        //     .catch(error => console.error (error.message.red));
-
     });
 });
 

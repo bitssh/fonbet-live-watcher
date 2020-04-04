@@ -30,6 +30,7 @@ exports.common = {
 
     cachedGamesSize: 200,
     useDummyUrl: false,
+    fetchTimeout:  this.useDummyUrl ? 100: 2000,
     fileWritingEnabled: true,
 };
 

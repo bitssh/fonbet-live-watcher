@@ -1,17 +1,17 @@
-const liveWatcherModule = require("./liveWatcher.js");
+const liveWatcherModule = require("../liveWatcher.js");
 const liveWatcher = liveWatcherModule.liveWatcher;
-const Game = require("./game").Game;
-const assert = require("assert");
-const {watchSportsIds} = require("./config");
-const config = require("./config.js").common;
-const notifying = require('./notifying.js');
+const Game = require("../game").Game;
 const {describe, it} = require("mocha");
-const {hasScore} = require("./sequenceChecking/SameScoreChecker");
-const {SameScoreChecker} = require("./sequenceChecking/SameScoreChecker");
-const {NoGoalsChecker} = require("./sequenceChecking/NoGoalsChecker");
-const {GoalsChecker} = require("./sequenceChecking/GoalsChecker");
-const {LastGameTotalChecker} = require("./sequenceChecking/LastGameTotalChecker");
-const {TotalMoreThanChecker, TotalLessThanChecker} = require("./sequenceChecking/totalSequenceCheckers");
+const assert = require("assert");
+const {watchSportsIds} = require("../config");
+const config = require("../config.js").common;
+const notifying = require('../notifying.js');
+const {hasScore} = require("../sequenceChecking/SameScoreChecker");
+const {SameScoreChecker} = require("../sequenceChecking/SameScoreChecker");
+const {NoGoalsChecker} = require("../sequenceChecking/NoGoalsChecker");
+const {GoalsChecker} = require("../sequenceChecking/GoalsChecker");
+const {LastGameTotalChecker} = require("../sequenceChecking/LastGameTotalChecker");
+const {TotalMoreThanChecker, TotalLessThanChecker} = require("../sequenceChecking/totalSequenceCheckers");
 const cachedGames = liveWatcher.gameFetcher.cachedGames;
 
 let notifications = [];
@@ -241,8 +241,6 @@ describe("TotalMoreThanChecker", function () {
         checkTotalsAssert(0);
     });
 });
-
-
 
 describe("TotalLessThanChecker", function () {
     cachedGames.clear();

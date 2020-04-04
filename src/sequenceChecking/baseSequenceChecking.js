@@ -17,7 +17,7 @@ class BaseGameSequenceChecker {
         return 1;
     }
     get notificationText () {
-        throw new Error ('notificationText method must be overridden');
+        this.constructor.throwMethodNotImplementedError();
     }
     sendNotification (notifier) {
         notifier.sendNotification(this);
@@ -25,6 +25,12 @@ class BaseGameSequenceChecker {
     checkCondition () {
         return this.seqCount >= this.seqCountTrigger;
     }
+    static throwMethodNotImplementedError() {
+        // noinspection JSUnresolvedVariable
+        throw new Error (`some of ${this.name} class method is not implemented`);
+    }
+
+
 }
 
 class BaseEachGameSequenceChecker extends BaseGameSequenceChecker{
@@ -74,7 +80,7 @@ const COMPARISON_TYPE = {
 
 class BaseTotalSequenceChecker extends BaseEachNewGameSequenceChecker {
     static get totalValueComparisonOperatorType() {
-        throw new Error('totalValueComparisonOperatorType must be implemented');
+        this.throwMethodNotImplementedError();
     }
     get seqCountTrigger() {
         return config.watchTotalSeqCount;
@@ -85,6 +91,9 @@ class BaseTotalSequenceChecker extends BaseEachNewGameSequenceChecker {
     }
     static getCurrentTotal(game) {
         return game.total;
+    }
+    static get totalValueCondition() {
+        this.throwMethodNotImplementedError();
     }
     static checkGameCondition(game) {
         return (this.totalValueComparisonOperatorType) === COMPARISON_TYPE.GREATER

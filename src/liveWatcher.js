@@ -17,13 +17,10 @@ const seriesCheckerClasses = [
     TotalLessThanChecker
 ];
 
-function checkConditionsAndSendNotifications (gameMap, lastGame) {
-    if (!lastGame) {
-        lastGame = gameMap.lastGame;
-    }
-    const games = gameMap.getGames(lastGame.sportId);
+function checkConditionsAndSendNotifications (gameMap, checkerClasses = seriesCheckerClasses) {
+    const games = gameMap.getGames(gameMap.lastGame.sportId);
 
-    for (let SeriesCheckerClass of seriesCheckerClasses) {
+    for (let SeriesCheckerClass of checkerClasses) {
         const seriesChecker = new SeriesCheckerClass(games);
         if (seriesChecker.checkCondition()) {
             seriesChecker.sendNotification();

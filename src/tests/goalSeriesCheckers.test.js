@@ -108,19 +108,19 @@ describe("sendNotifications.notifyAboutNoGoals", function () {
         cachedGames.clear();
         cachedGames.set(0, noGoalGame);
         cachedGames.set(1, noGoalGame);
-        checkConditionsAndSendNotifications(cachedGames, noGoalGame);
+        checkConditionsAndSendNotifications(cachedGames);
         assert.equal(notifications.length, 0);
     });
     it("новый матч - без оповещений", () => {
         cachedGames.set(2, newGame);
-        checkConditionsAndSendNotifications(cachedGames, newGame);
+        checkConditionsAndSendNotifications(cachedGames);
         assert.equal(notifications.length, 0);
     });
     it("3 матча без голов и новый матч - оповещение", () => {
         cachedGames.set(2, noGoalGame);
         cachedGames.set(3, newGame);
         //console.log(newGame);
-        checkConditionsAndSendNotifications(cachedGames, newGame);
+        checkConditionsAndSendNotifications(cachedGames);
         assert.equal(notifications.length, 1);
         assert.equal(notifications[0].seqCount, 3);
     });
@@ -130,14 +130,14 @@ describe("sendNotifications.notifyAboutNoGoals", function () {
     it("повторный новый матч - нет новых оповещений", () => {
         notifications = [];
         cachedGames.set(4, newGame);
-        checkConditionsAndSendNotifications(cachedGames, newGame);
+        checkConditionsAndSendNotifications(cachedGames);
         assert.equal(notifications.length, 0);
     });
     it("5 матчей без голов и новый матч - оповещение", () => {
         cachedGames.set(3, noGoalGame);
         cachedGames.set(4, noGoalGame);
         cachedGames.set(5, newGame);
-        checkConditionsAndSendNotifications(cachedGames, newGame);
+        checkConditionsAndSendNotifications(cachedGames);
         assert.equal(notifications.length, 1);
         assert.equal(notifications[0].seqCount, 5);
     });
@@ -145,7 +145,7 @@ describe("sendNotifications.notifyAboutNoGoals", function () {
         notifications = [];
 
         cachedGames.set(1, goalGame);
-        checkConditionsAndSendNotifications(cachedGames, newGame);
+        checkConditionsAndSendNotifications(cachedGames);
         assert.equal(notifications.length, 1);
         assert.equal(notifications[0].seqCount, 3);
     });

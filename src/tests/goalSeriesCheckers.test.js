@@ -1,7 +1,13 @@
-const {describe, it} = require("mocha");
+const {describe, it, before} = require("mocha");
+const {liveWatcher} = require("../liveWatcher.js");
+const assert = require("assert");
 const config = require("../config.js").common;
 const {GameTester} = require("./testTools.js");
 const {NoGoalSeriesChecker, GoalSeriesChecker} = require("../seriesChecking/goalSeriesCheckers");
+const {BaseGameSeriesChecker} = require("../seriesChecking/baseSeriesChecking");
+const {checkConditionsAndSendNotifications} = require("../liveWatcher");
+
+const cachedGames = liveWatcher.gameFetcher.cachedGames;
 
 config.watchNoGoalsCount = 3;
 config.watchNoGoalsFromSec = 270;
@@ -65,3 +71,67 @@ describe("GoalSeriesChecker", function () {
     });
 });
 
+
+
+describe("sendNotifications.notifyAboutNoGoals", function () {
+    config.watchNoGoalsCount = 3;
+    config.watchNoGoalsFromSec = 270;
+    cachedGames.clear();
+    const noGoalGame = {timerSeconds: 1, isNew: () => false};
+    const goalGame = {timerSeconds: 270, isNew: () => false};
+    const newGame = {scores: ['0:0'], isNew: () => true};
+    let notifications = [];
+
+    before(() => {
+        BaseGameSeriesChecker.prototype.sendNotification = function () {
+            notifications.push(this);
+        };
+    });
+
+    it("2 матча без голов - без оповещений", () => {
+        cachedGames.clear();
+        cachedGames.set(0, noGoalGame);
+        cachedGames.set(1, noGoalGame);
+        checkConditionsAndSendNotifications(cachedGames, noGoalGame);
+        assert.equal(notifications.length, 0);
+    });
+    it("новый матч - без оповещений", () => {
+        cachedGames.set(2, newGame);
+        checkConditionsAndSendNotifications(cachedGames, newGame);
+        assert.equal(notifications.length, 0);
+    });
+    it("3 матча без голов и новый матч - оповещение", () => {
+        cachedGames.set(2, noGoalGame);
+        cachedGames.set(3, newGame);
+        //console.log(newGame);
+        checkConditionsAndSendNotifications(cachedGames, newGame);
+        assert.equal(notifications.length, 1);
+        assert.equal(notifications[0].seqCount, 3);
+    });
+    it("проверка текста оповещения о серии без голов", () => {
+        assert.equal(notifications[0].notificationText, 'нет голов в 3 матчах с 270 секунды');
+    });
+    it("повторный новый матч - нет новых оповещений", () => {
+        notifications = [];
+        cachedGames.set(4, newGame);
+        checkConditionsAndSendNotifications(cachedGames, newGame);
+        assert.equal(notifications.length, 0);
+    });
+    it("5 матчей без голов и новый матч - оповещение", () => {
+        cachedGames.set(3, noGoalGame);
+        cachedGames.set(4, noGoalGame);
+        cachedGames.set(5, newGame);
+        checkConditionsAndSendNotifications(cachedGames, newGame);
+        assert.equal(notifications.length, 1);
+        assert.equal(notifications[0].seqCount, 5);
+        notifications = [];
+    });
+    it("делаем 2й матч с голом, в итоге 3 матчей без голов и новый матч - оповещение", () => {
+        notifications = [];
+
+        cachedGames.set(1, goalGame);
+        checkConditionsAndSendNotifications(cachedGames, newGame);
+        assert.equal(notifications.length, 1);
+        assert.equal(notifications[0].seqCount, 3);
+    });
+});

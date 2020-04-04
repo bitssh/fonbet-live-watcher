@@ -8,7 +8,6 @@ const config = require("../config.js").common;
 const notifying = require('../notifying.js');
 const {hasScore} = require("../sequenceChecking/SameScoreChecker");
 const {SameScoreChecker} = require("../sequenceChecking/SameScoreChecker");
-const {LastGameTotalChecker} = require("../sequenceChecking/LastGameTotalChecker");
 const cachedGames = liveWatcher.gameFetcher.cachedGames;
 
 let notifications = [];
@@ -88,42 +87,6 @@ describe("подсчёт количества последних игр с од�
         let game3 = new Game(['1:0']);
         games.push(game3);
         assert.deepEqual(SameScoreChecker.calcSeqCount(games), {count: 3, score: '1:0'});
-    });
-});
-
-describe("LastGameTotalChecker", function () {
-    let game;
-    cachedGames.clear();
-    const checkTotalAssert = (total) => {
-        assert.equal(LastGameTotalChecker.calcSeqCount(Array.from(cachedGames.values())), total);
-    };
-    config.watchTotalCount = 8;
-    config.watchTotalCountToSec = 200;
-
-    it("новая игра", () => {
-        cachedGames.clear();
-        game = pushGame({});
-        game.scores = [];
-        checkTotalAssert(0);
-    });
-    it("первый гол", () => {
-        game.scores.push('0:1');
-        game.timerSeconds = 10;
-        checkTotalAssert(0);
-    });
-    it("тотал = 7 до 200 секунды", () => {
-        game.scores.push('6:1');
-        game.timerSeconds = 190;
-        checkTotalAssert(0);
-    });
-    it("тотал = 8 до 200 секунды, триггер не срабатывает", () => {
-        game.scores.push('6:2');
-        game.timerSeconds = 190;
-        checkTotalAssert(1);
-    });
-    it("увеличиваем время гола, триггер не срабатывает", () => {
-        game.timerSeconds = 210;
-        checkTotalAssert(0);
     });
 });
 

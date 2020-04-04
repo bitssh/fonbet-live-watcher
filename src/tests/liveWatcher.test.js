@@ -3,7 +3,7 @@ const liveWatcher = liveWatcherModule.liveWatcher;
 const {describe, it, before} = require("mocha");
 const assert = require("assert");
 const config = require("../config.js").common;
-const notifying = require('../notifying.js');
+const {BaseGameSeriesChecker} = require("../seriesChecking/baseSeriesChecking");
 const {checkConditionsAndSendNotifications} = require("../liveWatcher");
 const {hasScore} = require("../seriesChecking/SameScoreChecker");
 const cachedGames = liveWatcher.gameFetcher.cachedGames;
@@ -51,8 +51,8 @@ describe("sendNotifications.notifyAboutNoGoals", function () {
     let notifications = [];
 
     before(() => {
-        notifying.Notifier.prototype.sendNotification = (notification) => {
-            notifications.push(notification)
+        BaseGameSeriesChecker.prototype.sendNotification = function () {
+            notifications.push(this);
         };
     });
 

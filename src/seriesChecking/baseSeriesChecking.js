@@ -1,3 +1,4 @@
+const {sendNotification} = require("../notifying");
 const config = require("../config.js").common;
 
 class BaseGameSeriesChecker {
@@ -22,8 +23,9 @@ class BaseGameSeriesChecker {
     get notificationText () {
         this.constructor.throwMethodNotImplementedError();
     }
-    sendNotification (notifier) {
-        notifier.sendNotification(this);
+    sendNotification () {
+        let {sportName, matchName} = this.lastGame;
+        sendNotification(sportName, matchName, this.notificationText);
     }
     checkCondition () {
         return this.seqCount >= this.seqCountTrigger;

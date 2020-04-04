@@ -4,7 +4,7 @@ const {describe, it, before} = require("mocha");
 const config = require("../config.js").common;
 const {GameTester} = require("./testTools.js");
 const {SameScoreChecker,} = require("../seriesChecking/SameScoreChecker");
-const notifying = require('../notifying.js');
+const {BaseGameSeriesChecker} = require("../seriesChecking/baseSeriesChecking");
 const {checkConditionsAndSendNotifications} = require("../liveWatcher");
 const {watchSportsIds} = require("../config");
 
@@ -41,8 +41,8 @@ describe("sendNotifications.notifyAboutScoreSeq", function () {
     let notifications = [];
     const game = gameTester.push({scores: ['4:4']});
     before(() => {
-        notifying.Notifier.prototype.sendNotification = (notification) => {
-            notifications.push(notification)
+        BaseGameSeriesChecker.prototype.sendNotification = function () {
+            notifications.push(this);
         };
         config.watchScoreSeq = [];
         config.watchScoreSeqCount = 3;

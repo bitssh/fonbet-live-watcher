@@ -3,8 +3,6 @@
 require("colors");
 const config = require("./config.js").common;
 const {sportInfoByID} = require("./config");
-const notifying = require('./notifying.js');
-const Notifier = notifying.Notifier;
 const fileTools = require('./fileTools.js');
 const {getLastLine} = require("./fileTools");
 const {TotalMoreThanChecker, TotalLessThanChecker} = require("./seriesChecking/totalSeriesCheckers");
@@ -24,12 +22,11 @@ function checkConditionsAndSendNotifications (gameMap, lastGame) {
         lastGame = gameMap.lastGame;
     }
     const games = gameMap.getGames(lastGame.sportId);
-    const notifier = new Notifier(lastGame.sportName, lastGame.event ? lastGame.event.name : '');
 
     for (let SeriesCheckerClass of seriesCheckerClasses) {
         const seriesChecker = new SeriesCheckerClass(games);
         if (seriesChecker.checkCondition()) {
-            seriesChecker.sendNotification(notifier);
+            seriesChecker.sendNotification();
         }
     }
 }

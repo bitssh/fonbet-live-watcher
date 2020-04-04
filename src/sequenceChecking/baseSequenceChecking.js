@@ -1,3 +1,5 @@
+const config = require("../config.js").common;
+
 class BaseGameSequenceChecker {
     constructor (games) {
         this.games = games.slice();
@@ -65,8 +67,35 @@ class BaseLastGameChecker extends BaseEachGameSequenceChecker {
 }
 
 
+const COMPARISON_TYPE = {
+    GREATER: 'больше',
+    LESS: 'меньше',
+};
+
+class BaseTotalSequenceChecker extends BaseEachNewGameSequenceChecker {
+    static get totalValueComparisonOperatorType() {
+        throw new Error('totalValueComparisonOperatorType must be implemented');
+    }
+    get seqCountTrigger() {
+        return config.watchTotalSeqCount;
+    }
+    get notificationText() {
+        return `тотал ${this.constructor.totalValueComparisonOperatorType} 
+        ${this.watchTotalSeqMoreThan} в ${this.seqCount} матчах подряд`;
+    }
+    static getCurrentTotal(game) {
+        return game.total;
+    }
+    static checkGameCondition(game) {
+        return (this.totalValueComparisonOperatorType) === COMPARISON_TYPE.GREATER
+            ? this.getCurrentTotal(game) > this.totalValueCondition
+            : this.getCurrentTotal(game) < this.totalValueCondition;
+    }
+}
 
 exports.BaseGameSequenceChecker = BaseGameSequenceChecker;
 exports.BaseEachGameSequenceChecker = BaseEachGameSequenceChecker;
 exports.BaseEachNewGameSequenceChecker = BaseEachNewGameSequenceChecker;
 exports.BaseLastGameChecker = BaseLastGameChecker;
+exports.BaseTotalSequenceChecker = BaseTotalSequenceChecker;
+exports.COMPARISON_TYPE = COMPARISON_TYPE;

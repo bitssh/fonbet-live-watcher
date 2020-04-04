@@ -1,27 +1,21 @@
-const {BaseEachNewGameSequenceChecker} = require("./baseSequenceChecking");
+const {BaseTotalSequenceChecker, COMPARISON_TYPE} = require("./baseSequenceChecking");
 const config = require("../config.js").common;
 
-class TotalMoreThanChecker extends BaseEachNewGameSequenceChecker {
-    get seqCountTrigger () {
-        return config.watchTotalSeqCount;
+class TotalMoreThanChecker extends BaseTotalSequenceChecker {
+    static get totalValueCondition() {
+        return config.watchTotalSeqMoreThan;
     }
-    get notificationText() {
-        return  `тотал больше ${this.watchTotalSeqMoreThan} в ${this.seqCount} матчах подряд`;
-    }
-    static checkGameCondition(game) {
-        return game.total > config.watchTotalSeqMoreThan;
+    static get totalValueComparisonOperatorType() {
+        return COMPARISON_TYPE.GREATER;
     }
 }
 
-class TotalLessThanChecker extends BaseEachNewGameSequenceChecker {
-    get seqCountTrigger () {
-        return config.watchTotalSeqCount;
+class TotalLessThanChecker extends BaseTotalSequenceChecker {
+    static get totalValueCondition() {
+        return config.watchTotalSeqLessThan;
     }
-    get notificationText() {
-        return  `тотал меньше ${this.watchTotalSeqLessThan} в ${this.seqCount} матчах подряд`;
-    }
-    static checkGameCondition(game) {
-        return game.total < config.watchTotalSeqLessThan;
+    static get totalValueComparisonOperatorType() {
+        return COMPARISON_TYPE.LESS;
     }
 }
 

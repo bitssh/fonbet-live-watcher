@@ -11,7 +11,7 @@ class Game {
         return this.scores[this.scores.length - 1];
     }
     get total() {
-        return this.getTeamTotal(0) + this.getTeamTotal(1);
+        return this.getTeamScore(0) + this.getTeamScore(1);
     }
     get timerSeconds() {
         return this.miscs.timerSeconds;
@@ -42,7 +42,7 @@ class Game {
             ? ''
             : new Date(this.miscs.timerUpdateTimestamp * 1000).toLocaleTimeString();
     }
-    getTeamTotal(teamNumber) {
+    getTeamScore(teamNumber) {
         return Number(this.score.split(':')[teamNumber]);
     }
     isNew() {

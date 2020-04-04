@@ -8,8 +8,6 @@ const config = require("../config.js").common;
 const notifying = require('../notifying.js');
 const {hasScore} = require("../sequenceChecking/SameScoreChecker");
 const {SameScoreChecker} = require("../sequenceChecking/SameScoreChecker");
-const {NoGoalsChecker} = require("../sequenceChecking/NoGoalsChecker");
-const {GoalsChecker} = require("../sequenceChecking/GoalsChecker");
 const {LastGameTotalChecker} = require("../sequenceChecking/LastGameTotalChecker");
 const cachedGames = liveWatcher.gameFetcher.cachedGames;
 
@@ -92,74 +90,6 @@ describe("подсчёт количества последних игр с од�
         assert.deepEqual(SameScoreChecker.calcSeqCount(games), {count: 3, score: '1:0'});
     });
 });
-
-describe("NoGoalsChecker", function () {
-    let games = [];
-    const checkGoalsCountAssert = (goals) => {
-        assert.equal(NoGoalsChecker.calcSeqCount(games), goals);
-    };
-    config.watchNoGoalsCount = 3;
-    config.watchNoGoalsFromSec = 270;
-
-    it("нет игр - 0 игр без голов", () => {
-        checkGoalsCountAssert(0);
-    });
-    it("две игры без голов", () => {
-        games.push({scores: ['4:4'], timerSeconds: 100});
-        games.push({scores: ['0:0', '4:4'], timerSeconds: 200});
-        checkGoalsCountAssert(2);
-    });
-    it("в последней игре был гол вконце  - значит 0 последних игр без голов", () => {
-        games.push({scores: ['0:0', '5:5'], timerSeconds: 300});
-        checkGoalsCountAssert(0);
-    });
-    it("в последней игре был гол, но не вконце - значит 1 последняя игра без голов", () => {
-        games.push({scores: ['4:4'], timerSeconds: 269});
-        checkGoalsCountAssert(1);
-    });
-    it("гол в конце игры и последующие 3 игры без голов", () => {
-        games.push({scores: ['0:0', '4:4'], timerSeconds: 300});
-        games.push({scores: ['5:5'], timerSeconds: 1});
-        games.push({scores: ['5:5'], timerSeconds: 1});
-        games.push({scores: ['5:5'], timerSeconds: 1});
-        checkGoalsCountAssert(3);
-    });
-});
-
-
-describe("GoalsChecker", function () {
-    let games = [];
-    const checkGoalsCountAssert = (goals) => {
-        assert.equal(GoalsChecker.calcSeqCount(games), goals);
-    };
-    config.watchGoalsCount = 3;
-    config.watchGoalsFromSec = 270;
-
-    it("нет игр - 0 игр с голами", () => {
-        assert.equal(GoalsChecker.calcSeqCount(games), 0);
-    });
-    it("две игры с голами", () => {
-        games.push({scores: ['4:4'], timerSeconds: 290});
-        games.push({scores: ['4:4'], timerSeconds: 270});
-        checkGoalsCountAssert(2);
-    });
-    it("в последней игре не было гола  - значит 0 последних игр с голами", () => {
-        games.push({scores: ['5:5'], timerSeconds: 200});
-        checkGoalsCountAssert(0);
-    });
-    it("в последней игре был гол в конце - значит 1 последняя игра с голами", () => {
-        games.push({scores: ['4:4'], timerSeconds: 272});
-        checkGoalsCountAssert(1);
-    });
-    it("1 игра без голов и последующие 3 игры с голами", () => {
-        games.push({scores: ['4:4'], timerSeconds: 1});
-        games.push({scores: ['5:5'], timerSeconds: 270});
-        games.push({scores: ['5:5'], timerSeconds: 300});
-        games.push({scores: ['5:5'], timerSeconds: 300});
-        checkGoalsCountAssert(3);
-    });
-});
-
 
 describe("LastGameTotalChecker", function () {
     let game;

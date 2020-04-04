@@ -55,7 +55,7 @@ exports.liveWatcher = {
                 this.appendToFile(game);
             }
             this.appendToConsole(game);
-            this.checkSeriess(game);
+            this.checkSeries(game);
         }
     },
     appendToFile(game) {
@@ -87,7 +87,7 @@ exports.liveWatcher = {
 
     },
 
-    checkSeriess(game) {
+    checkSeries(game) {
         const games = this.gameFetcher.cachedGames.getGames(game.sportId);
 
         const notifier = new Notifier(game.sportName, game.event ? game.event.name : '');

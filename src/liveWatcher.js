@@ -19,6 +19,18 @@ const seriesCheckerClasses = [
     TotalLessThanChecker
 ];
 
+function checkConditionsAndSendNotifications (gameMap, lastGame) {
+    const games = gameMap.getGames(lastGame.sportId);
+    const notifier = new Notifier(lastGame.sportName, lastGame.event ? lastGame.event.name : '');
+
+    for (let SeriesCheckerClass of seriesCheckerClasses) {
+        const seriesChecker = new SeriesCheckerClass(games, lastGame);
+        if (seriesChecker.checkCondition()) {
+            seriesChecker.sendNotification(notifier);
+        }
+    }
+}
+
 exports.liveWatcher = {
     lastCSVLine: {},
     gameFetcher: require("./gameFetcher").gameFetcher,
@@ -55,7 +67,7 @@ exports.liveWatcher = {
                 this.appendToFile(game);
             }
             this.appendToConsole(game);
-            this.checkSeries(game);
+            checkConditionsAndSendNotifications(this.gameFetcher.cachedGames, game);
         }
     },
     appendToFile(game) {
@@ -87,19 +99,7 @@ exports.liveWatcher = {
 
     },
 
-    checkSeries(game) {
-        const games = this.gameFetcher.cachedGames.getGames(game.sportId);
-
-        const notifier = new Notifier(game.sportName, game.event ? game.event.name : '');
-
-        for (let SeriesCheckerClass of seriesCheckerClasses) {
-            const seriesChecker = new SeriesCheckerClass(games, game);
-            if (seriesChecker.checkCondition(games, game)) {
-                seriesChecker.sendNotification(notifier);
-            }
-        }
-    },
-
 
 };
 
+exports.checkConditionsAndSendNotifications = checkConditionsAndSendNotifications;

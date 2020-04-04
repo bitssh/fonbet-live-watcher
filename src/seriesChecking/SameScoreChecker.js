@@ -17,7 +17,7 @@ class SameScoreChecker extends BaseGameSeriesChecker {
     static calcSeqCount(games) {
         let count = 1;
         let score;
-        if (games[games.length - 1].score) {
+        if (games.length && games[games.length - 1].score) {
             score = games[games.length - 1].score;
             if (hasScore(config.watchScoreSeq, score)) {
                 for (let i = games.length - 2; i >= 0; i -= 1) {

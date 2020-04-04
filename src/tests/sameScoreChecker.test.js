@@ -1,7 +1,12 @@
+const assert = require("assert");
+
 const {describe, it} = require("mocha");
 const config = require("../config.js").common;
 const {GameTester} = require("./testTools.js");
 const {SameScoreChecker,} = require("../seriesChecking/SameScoreChecker");
+const notifying = require('../notifying.js');
+const {checkConditionsAndSendNotifications} = require("../liveWatcher");
+const {watchSportsIds} = require("../config");
 
 describe("SameScoreChecker", () => {
 
@@ -30,3 +35,60 @@ describe("SameScoreChecker", () => {
         gameTester.assertSeqCountDeepEquals({count: 3, score: '1:0'});
     });
 });
+
+describe("sendNotifications.notifyAboutScoreSeq", function () {
+    const gameTester = new GameTester(SameScoreChecker);
+    let notifications = [];
+    config.watchScoreSeqCount = 3;
+    const game = gameTester.push({scores: ['4:4']});
+    it("3 серии и не задан массив очков", () => {
+        config.watchScoreSeq = [];
+        config.watchScoreSeqCount = 3;
+
+        notifying.Notifier.prototype.sendNotification = (notification) => {
+            notifications.push(notification)
+        };
+
+        gameTester.push({scores: ['4:4']});
+        gameTester.push({scores: ['5:5']});
+        gameTester.push({scores: ['5:5']});
+        gameTester.push({scores: ['5:5']});
+        checkConditionsAndSendNotifications(gameTester.cachedGames, game);
+        assert.equal(notifications.length, 0);
+    });
+    it("3 серии и задан массив очков", () => {
+        notifications = [];
+        config.watchScoreSeq = ['4:4'];
+        checkConditionsAndSendNotifications(gameTester.cachedGames, game);
+        assert.equal(notifications.length, 0);
+        config.watchScoreSeq = ['4:4', '5:5', '6:6'];
+        checkConditionsAndSendNotifications(gameTester.cachedGames, game);
+        assert.equal(notifications.length, 1);
+        assert.deepEqual(notifications[0].seqCount, {count: 3, score: '5:5'});
+    });
+    it("добавили матч - 4 серии", () => {
+        notifications = [];
+        gameTester.push({scores: ['5:5']});
+        checkConditionsAndSendNotifications(gameTester.cachedGames, game);
+        assert.equal(notifications.length, 1);
+        assert.deepEqual(notifications[0].seqCount, {count: 4, score: '5:5'});
+
+    });
+    it("добавили 2 матча с другим типом игры - также 4 серии", () => {
+        notifications = [];
+        gameTester.push({scores: ['5:5']}, watchSportsIds.hockey);
+        gameTester.push({scores: ['5:5']}, watchSportsIds.hockey);
+        checkConditionsAndSendNotifications(gameTester.cachedGames, game);
+        assert.deepEqual(notifications[0].seqCount, {count: 4, score: '5:5'});
+
+    });
+    it("изменили 2 последних матча на футбол - оборвали серию", () => {
+        notifications = [];
+        gameTester.cachedGames.set(6, {scores: ['4:4'], sportId: watchSportsIds.football});
+        gameTester.cachedGames.set(7, {scores: ['4:4'], sportId: watchSportsIds.football});
+        checkConditionsAndSendNotifications(gameTester.cachedGames, game);
+        assert.equal(notifications.length, 0);
+
+    });
+});
+

@@ -1,6 +1,6 @@
 "use strict";
 // https://www.fonbet.ru/#!/live/rocket-league
-
+require("colors");
 const config = require("./config.js").common;
 const {sportInfoByID} = require("./config");
 const notifying = require('./notifying.js');

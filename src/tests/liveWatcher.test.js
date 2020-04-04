@@ -11,7 +11,6 @@ const {SameScoreChecker} = require("../sequenceChecking/SameScoreChecker");
 const {NoGoalsChecker} = require("../sequenceChecking/NoGoalsChecker");
 const {GoalsChecker} = require("../sequenceChecking/GoalsChecker");
 const {LastGameTotalChecker} = require("../sequenceChecking/LastGameTotalChecker");
-const {TotalMoreThanChecker, TotalLessThanChecker} = require("../sequenceChecking/totalSequenceCheckers");
 const cachedGames = liveWatcher.gameFetcher.cachedGames;
 
 let notifications = [];
@@ -195,88 +194,6 @@ describe("LastGameTotalChecker", function () {
     it("увеличиваем время гола, триггер не срабатывает", () => {
         game.timerSeconds = 210;
         checkTotalAssert(0);
-    });
-});
-
-
-describe("TotalMoreThanChecker", function () {
-    cachedGames.clear();
-    const checkTotalsAssert = (total) => {
-        assert.equal(TotalMoreThanChecker.calcSeqCount(Array.from(cachedGames.values())), total);
-    };
-    config.watchTotalSeqCount = 3;
-    config.watchTotalSeqLessThan = 7.5;
-
-    it("все игры с тоталом меньше 7, результат 0", () => {
-        cachedGames.clear();
-        pushGame({scores: ['0:7']});
-        pushGame({scores: ['2:5']});
-        pushGame({scores: ['0:1']});
-        pushGame({scores: ['3:4']});
-        checkTotalsAssert(0);
-    });
-    it("тотал больше 7.5 максимум в двух играх подряд - результат 0 ", () => {
-        pushGame({scores: ['7:10']});
-        pushGame({scores: ['12:5']});
-        pushGame({scores: ['0:7']});
-        checkTotalsAssert(0);
-        pushGame({scores: ['11:11']});
-        pushGame({scores: ['11:11']});
-        pushGame({scores: ['0:0']});
-        checkTotalsAssert(0);
-    });
-    it("тотал больше 7.5 в трех играх подряд - результат 3", () => {
-        pushGame({scores: ['7:10']});
-        pushGame({scores: ['12:5']});
-        pushGame({scores: ['1:7']});
-        checkTotalsAssert(3);
-    });
-    it("тотал больше 7.5 ещё в двух играх подряд - результат 5", () => {
-        pushGame({scores: ['10:10']});
-        pushGame({scores: ['11:11']});
-        checkTotalsAssert(5);
-    });
-    it("в следующей игре тотал меньше 7.5 - результат 0", () => {
-        pushGame({scores: ['3:4']});
-        checkTotalsAssert(0);
-    });
-});
-
-describe("TotalLessThanChecker", function () {
-    cachedGames.clear();
-    const checkTotalsAssert = (total) => {
-        assert.equal(TotalLessThanChecker.calcSeqCount(Array.from(cachedGames.values())), total);
-    };
-    config.watchTotalSeqCount = 3;
-    config.watchTotalSeqLessThan = 7.5;
-
-    it("все игры с тоталом больше 7.5, результат 0", () => {
-        cachedGames.clear();
-        pushGame({scores: ['11:7']});
-        pushGame({scores: ['3:5']});
-        pushGame({scores: ['6:2']});
-        pushGame({scores: ['4:4']});
-        checkTotalsAssert(0);
-    });
-    it("тотал меньше 7.5 максимум в двух играх подряд - результат 0 ", () => {
-        pushGame({scores: ['1:0']});
-        pushGame({scores: ['0:5']});
-        pushGame({scores: ['0:8']});
-        checkTotalsAssert(0);
-        pushGame({scores: ['3:4']});
-        pushGame({scores: ['0:0']});
-        pushGame({scores: ['11:11']});
-        checkTotalsAssert(0);
-    });
-    it("тотал меньше 7.5 в трех играх подряд - результат 3", () => {
-        pushGame({scores: ['6:1']});
-        pushGame({scores: ['0:0']});
-        pushGame({scores: ['1:1']});
-        checkTotalsAssert(3);
-    });
-    it("в следующей игре тотал больше 7.5 - результат 0", () => {
-        pushGame({scores: ['4:4']});
-        checkTotalsAssert(0);
     });
 });
 

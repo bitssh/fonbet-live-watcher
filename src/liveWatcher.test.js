@@ -10,7 +10,7 @@ const {hasScore} = require("./sequenceChecking/SameScoreChecker");
 const {SameScoreChecker} = require("./sequenceChecking/SameScoreChecker");
 const {NoGoalsChecker} = require("./sequenceChecking/NoGoalsChecker");
 const {GoalsChecker} = require("./sequenceChecking/GoalsChecker");
-const {TotalChecker} = require("./sequenceChecking/TotalChecker");
+const {LastGameTotalChecker} = require("./sequenceChecking/LastGameTotalChecker");
 const {TotalSequenceChecker} = require("./sequenceChecking/TotalSequenceChecker");
 const cachedGames = liveWatcher.gameFetcher.cachedGames;
 
@@ -162,11 +162,11 @@ describe("GoalsChecker", function () {
 });
 
 
-describe("TotalChecker", function () {
+describe("LastGameTotalChecker", function () {
     let game;
     cachedGames.clear();
     const checkTotalAssert = (total) => {
-        assert.equal(TotalChecker.calcSeqCount(Array.from(cachedGames.values())), total);
+        assert.equal(LastGameTotalChecker.calcSeqCount(Array.from(cachedGames.values())), total);
     };
     config.watchTotalCount = 8;
     config.watchTotalCountToSec = 200;

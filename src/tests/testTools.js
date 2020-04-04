@@ -2,10 +2,6 @@ const {GameMap} = require("../game");
 const {watchSportsIds} = require("../config");
 const assert = require("assert");
 
-const checkGameCountAssert = (checker, gameTester, value) => {
-    assert.equal(checker.calcSeqCount(Array.from(gameTester.cachedGames.values())), value);
-};
-
 class GameTester {
 
     constructor (checker) {
@@ -20,11 +16,14 @@ class GameTester {
         result.timerSeconds = game.timerSeconds;
         return result;
     }
-    checkCountAssert (count) {
-        checkGameCountAssert(this.checker, this, count);
+    assertSeqCountEquals (count) {
+        assert.equal(this.calcSeqCount(), count);
     };
+
+    calcSeqCount () {
+        return this.checker.calcSeqCount(Array.from(this.cachedGames.values()));
+    }
 
 }
 
 exports.GameTester = GameTester;
-exports.checkGameCountAssert = checkGameCountAssert;

@@ -53,14 +53,26 @@ class BaseEachGameSeriesChecker extends BaseGameSeriesChecker {
     static checkGameCondition() {
         return false;
     }
+    static getSwitchableGameConditionResult(game) {
+        return this.checkGameCondition(game) ? 1 : -1;
+    }
+    static iterateGame(game) {
+        let result = Math.sign(this.getSwitchableGameConditionResult(game));
+        return {
+            [-1]: {doBreak: true, countIncrement: 0},
+            [1]: {countIncrement: 1},
+            [0]: {countIncrement: 0},
+            [NaN]: {countIncrement: 0},
+        }[result];
+    }
     static calcSeqCount(games) {
         let count = 0;
         for (let game of games.reverse()) {
-            if (this.checkGameCondition(game)) {
-                count += 1;
-            } else {
+            let result = this.iterateGame(game);
+            if (result.doBreak) {
                 break;
             }
+            count += result.countIncrement;
         }
         return count;
     }
@@ -82,9 +94,6 @@ class BaseLastGameChecker extends BaseEachGameSeriesChecker {
         super(games);
         this.games = [this.lastGame];
     }
-    // constructor(games, lastGame) {
-    //     super([lastGame]);
-    // }
 }
 
 const COMPARISON_TYPE = {
@@ -94,25 +103,42 @@ const COMPARISON_TYPE = {
 
 class BaseTotalSeriesChecker extends BaseEachNewGameSeriesChecker {
     static get totalValueComparisonOperatorType() {
-        this.throwMethodNotImplementedError();
+        return null;
     }
-    static get totalValueCondition() {
+    static getComparedTotalValue() {
         this.throwMethodNotImplementedError();
     }
     get seqCountTrigger() {
         return config.watchTotalSeqCount;
     }
     get notificationText() {
-        return `тотал ${this.constructor.totalValueComparisonOperatorType} ${this.constructor.totalValueCondition}` +
+        return `тотал ${this.constructor.totalValueComparisonOperatorType} ${this.constructor.getComparedTotalValue()}` +
             ` в ${this.seqCount} матчах подряд`;
     }
     static getCurrentTotal(game) {
         return game.total;
     }
-    static checkGameCondition(game) {
-        return (this.totalValueComparisonOperatorType) === COMPARISON_TYPE.GREATER
-            ? this.getCurrentTotal(game) > this.totalValueCondition
-            : this.getCurrentTotal(game) < this.totalValueCondition;
+    static getSwitchableGameConditionResult(game) {
+        let result = this.getCurrentTotal(game) - this.getComparedTotalValue(game);
+        if (this.totalValueComparisonOperatorType === COMPARISON_TYPE.LESS) {
+            result = result * - 1;
+        }
+        return result;
+    }
+}
+
+class BaseTeamTotalSeriesChecker extends BaseTotalSeriesChecker {
+    static get teamNumber() {
+        this.throwMethodNotImplementedError();
+    }
+    get seqCountTrigger() {
+        return config.watchTeamTotalSeqCount;
+    }
+    get notificationText() {
+        return `${this.constructor.teamNumber + 1} команда - ${super.notificationText}`;
+    }
+    static getCurrentTotal(game) {
+        return game.getTeamScore(this.teamNumber);
     }
 }
 
@@ -121,4 +147,5 @@ exports.BaseEachGameSeriesChecker = BaseEachGameSeriesChecker;
 exports.BaseEachNewGameSeriesChecker = BaseEachNewGameSeriesChecker;
 exports.BaseLastGameChecker = BaseLastGameChecker;
 exports.BaseTotalSeriesChecker = BaseTotalSeriesChecker;
+exports.BaseTeamTotalSeriesChecker = BaseTeamTotalSeriesChecker;
 exports.COMPARISON_TYPE = COMPARISON_TYPE;

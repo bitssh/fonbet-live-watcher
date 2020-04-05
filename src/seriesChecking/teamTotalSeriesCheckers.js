@@ -1,24 +1,9 @@
-const {BaseTotalSeriesChecker} = require("./baseSeriesChecking");
+const {BaseTeamTotalSeriesChecker} = require("./baseSeriesChecking");
 const config = require("../config.js").common;
 const {COMPARISON_TYPE} = require("./baseSeriesChecking");
 
-class BaseTeamTotalSeriesChecker extends BaseTotalSeriesChecker {
-    static get teamNumber() {
-        this.throwMethodNotImplementedError();
-    }
-    get seqCountTrigger() {
-        return config.watchTeamTotalSeqCount;
-    }
-    get notificationText() {
-        return `${this.constructor.teamNumber + 1} команда - ${super.notificationText}`;
-    }
-    static getCurrentTotal(game) {
-        return game.getTeamScore(this.teamNumber);
-    }
-}
-
 class BaseTeamScoreLessThanChecker extends BaseTeamTotalSeriesChecker {
-    static get totalValueCondition() {
+    static getComparedTotalValue() {
         return config.watchTeamTotalSeqLessThan;
     }
     static get totalValueComparisonOperatorType() {
@@ -27,7 +12,7 @@ class BaseTeamScoreLessThanChecker extends BaseTeamTotalSeriesChecker {
 }
 
 class BaseTeamScoreMoreThanChecker extends BaseTeamTotalSeriesChecker {
-    static get totalValueCondition() {
+    static getComparedTotalValue() {
         return config.watchTeamTotalSeqMoreThan;
     }
     static get totalValueComparisonOperatorType() {

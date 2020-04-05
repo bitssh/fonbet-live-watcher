@@ -24,6 +24,9 @@ exports.common = {
     watchTeamTotalSeqLessThan: 3.5,
     watchTeamTotalSeqMoreThan: 3.5,
 
+    // Победные серии команд
+    watchTeamWinSeries: 5,
+
     // Если до 200 секунды сумма голов 8 - прислать уведомление
     watchTotalCountToSec: 200,
     watchTotalCount: 8,

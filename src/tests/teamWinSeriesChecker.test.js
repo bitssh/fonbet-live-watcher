@@ -15,7 +15,7 @@ describe("Team1WinChecker", () => {
         gameTester.push({scores: ['0:1']});
         gameTester.push({scores: ['1:0']});
         gameTester.push({scores: ['0:4']});
-        gameTester.push({scores: ['0:1']});
+        gameTester.push({scores: ['2:1']});
         gameTester.push({scores: ['0:1']});
         gameTester.assertSeqCountEquals(0);
     });
@@ -52,14 +52,14 @@ describe("Team2WinChecker", () => {
     it("проверка текста оповещения", () => {
         gameTester.assertNotificationText('2 команда - победная серия 7 матчей');
     });
-    it('оборвали серию', () => {
-        gameTester.push({scores: ['6:0']});
+    it('оборвали серию в конце', () => {
+        gameTester.push({scores: ['6:8']});
         gameTester.push({scores: ['6:5']});
         gameTester.push({scores: ['1:1']});
         gameTester.push({scores: ['0:0']});
-        gameTester.push({scores: ['1:0']});
-        gameTester.push({scores: ['2:0']});
-        gameTester.push({scores: ['5:4']});
+        gameTester.push({scores: ['1:4']});
+        gameTester.push({scores: ['2:5']});
+        gameTester.push({scores: ['6:0']});
         gameTester.assertSeqCountEquals(0);
     });
 });

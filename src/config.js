@@ -14,22 +14,22 @@ exports.common = {
 
     // Подсчёт тоталов в конце матча (итоговая сумма голов)
     // например: Футбол - тотал меньше (больше) 7.5 в 5 матчах подряд
-    watchTotalSeqCount: 5,
+    watchTotalSeqCount: 3,
     watchTotalSeqLessThan: 7.5,
     watchTotalSeqGreaterThan: 7.5,
 
     // Подсчёт индивидуальных тоталов
     // например: Синие - тотал голов больше 3.5 в 6 матчах подряд
-    watchTeamTotalSeqCount: 5,
+    watchTeamTotalSeqCount: 3,
     watchTeamTotalSeqLessThan: 3.5,
     watchTeamTotalSeqGreaterThan: 3.5,
 
     // Победные серии команд
-    watchTeamWinSeries: 5,
+    watchTeamWinSeries: 3,
 
     // Если до 200 секунды сумма голов 8 - прислать уведомление
     watchTotalCountToSec: 200,
-    watchTotalCount: 8,
+    watchTotalCount: 6,
 
     cachedGamesSize: 200,
     useDummyUrl: false,

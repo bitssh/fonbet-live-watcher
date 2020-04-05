@@ -4,17 +4,31 @@ require("colors");
 const config = require("./config.js").common;
 const {sportInfoByID} = require("./config");
 const fileTools = require('./fileTools.js');
+const {Team1WinChecker} = require("./seriesChecking/teamWinSeriesChecker");
+const {Team2ScoreLessThanChecker} = require("./seriesChecking/teamTotalSeriesCheckers");
+const {Team1ScoreLessThanChecker} = require("./seriesChecking/teamTotalSeriesCheckers");
+const {Team2ScoreGreaterThanChecker} = require("./seriesChecking/teamTotalSeriesCheckers");
+const {Team1ScoreGreaterThanChecker} = require("./seriesChecking/teamTotalSeriesCheckers");
+const {LastGameTotalChecker} = require("./seriesChecking/LastGameTotalChecker");
+const {Team2WinChecker} = require("./seriesChecking/teamWinSeriesChecker");
 const {getLastLine} = require("./fileTools");
 const {TotalGreaterThanChecker, TotalLessThanChecker} = require("./seriesChecking/totalSeriesCheckers");
 const {SameScoreChecker} = require("./seriesChecking/SameScoreChecker");
 const {NoGoalSeriesChecker, GoalSeriesChecker} = require("./seriesChecking/goalSeriesCheckers");
 
 const seriesCheckerClasses = [
-    SameScoreChecker,
     NoGoalSeriesChecker,
     GoalSeriesChecker,
+    LastGameTotalChecker,
+    SameScoreChecker,
+    Team1ScoreGreaterThanChecker,
+    Team2ScoreGreaterThanChecker,
+    Team1ScoreLessThanChecker,
+    Team2ScoreLessThanChecker,
+    Team1WinChecker,
+    Team2WinChecker,
     TotalGreaterThanChecker,
-    TotalLessThanChecker
+    TotalLessThanChecker,
 ];
 
 function checkSeriesAndNotify (gameMap, checkerClasses = seriesCheckerClasses) {

@@ -3,7 +3,6 @@ const {sportInfoByID} = require("./config");
 class Game {
 
     constructor(scores) {
-        this.now = new Date().toLocaleString();
         this.scores = scores ? scores : [];
         this.list = null;
     }
@@ -38,6 +37,9 @@ class Game {
         return !this.miscs.timerUpdateTimestamp
             ? ''
             : new Date(this.miscs.timerUpdateTimestamp * 1000).toLocaleTimeString();
+    }
+    get now () {
+        return new Date().toLocaleString();
     }
     getTeamScore(teamNumber) {
         return Number(this.score.split(':')[teamNumber]);

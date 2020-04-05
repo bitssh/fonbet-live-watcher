@@ -31,9 +31,7 @@ const seriesCheckerClasses = [
     TotalLessThanChecker,
 ];
 
-function checkSeriesAndNotify (gameMap, checkerClasses = seriesCheckerClasses) {
-    const games = gameMap.getGames(gameMap.lastGame.sportId);
-
+function checkSeriesAndNotify (games, checkerClasses = seriesCheckerClasses) {
     for (let SeriesCheckerClass of checkerClasses) {
         const seriesChecker = new SeriesCheckerClass(games);
         if (seriesChecker.checkCondition()) {
@@ -78,7 +76,8 @@ exports.liveWatcher = {
                 this.appendToFile(game);
             }
             this.appendToConsole(game);
-            checkSeriesAndNotify(this.gameFetcher.cachedGames);
+            const games = this.gameFetcher.cachedGames.getGames(game.sportId);
+            checkSeriesAndNotify(games);
         }
     },
     appendToFile(game) {
@@ -98,8 +97,8 @@ exports.liveWatcher = {
 
         let seqStr = SameScoreChecker.calcSeqCount(games).count;
         let clnStr = NoGoalSeriesChecker.calcSeqCount(games);
-        seqStr = +seqStr >= config.watchScoreSeqCount - 1 ? String('S' + seqStr).yellow : '  ';
-        clnStr = +clnStr >= config.watchNoGoalsCount - 1 ? String('C' + clnStr).yellow : '  ';
+        seqStr = +seqStr >= config.watchScoreSeqCount - 1 ? String('S' + seqStr) : '  ';
+        clnStr = +clnStr >= config.watchNoGoalsCount - 1 ? String('C' + clnStr) : '  ';
 
         let logStr = `${game.now} ${sportName}${seqStr} ${clnStr} `
             + `${game.event.id}  ${game.event.name} <${game.score}> ${timerSeconds} ${game.timerUpdate} `;

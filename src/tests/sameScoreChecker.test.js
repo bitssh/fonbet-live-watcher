@@ -5,7 +5,7 @@ const config = require("../config.js").common;
 const {GameTester} = require("./testTools.js");
 const {SameScoreChecker,} = require("../seriesChecking/SameScoreChecker");
 const {BaseGameSeriesChecker} = require("../seriesChecking/baseSeriesChecking");
-const {checkConditionsAndSendNotifications} = require("../liveWatcher");
+const {checkSeriesAndNotify} = require("../liveWatcher");
 const {watchSportsIds} = require("../config");
 
 describe("SameScoreChecker", () => {
@@ -61,23 +61,23 @@ describe("sendNotifications.notifyAboutScoreSeq", function () {
         gameTester.push({scores: ['5:5']});
         gameTester.push({scores: ['5:5']});
         gameTester.push({scores: ['5:5']});
-        checkConditionsAndSendNotifications(gameTester.cachedGames);
+        checkSeriesAndNotify(gameTester.cachedGames);
         assert.equal(notifications.length, 0);
     });
     it("3 серии и задан массив очков", () => {
         notifications = [];
         config.watchScoreSeq = ['4:4'];
-        checkConditionsAndSendNotifications(gameTester.cachedGames);
+        checkSeriesAndNotify(gameTester.cachedGames);
         assert.equal(notifications.length, 0);
         config.watchScoreSeq = ['4:4', '5:5', '6:6'];
-        checkConditionsAndSendNotifications(gameTester.cachedGames);
+        checkSeriesAndNotify(gameTester.cachedGames);
         assert.equal(notifications.length, 1);
         assert.deepEqual(notifications[0].seqCount, {count: 3, score: '5:5'});
     });
     it("добавили матч - 4 серии", () => {
         notifications = [];
         gameTester.push({scores: ['5:5']});
-        checkConditionsAndSendNotifications(gameTester.cachedGames,);
+        checkSeriesAndNotify(gameTester.cachedGames,);
         assert.equal(notifications.length, 1);
         assert.deepEqual(notifications[0].seqCount, {count: 4, score: '5:5'});
 
@@ -86,7 +86,7 @@ describe("sendNotifications.notifyAboutScoreSeq", function () {
         notifications = [];
         gameTester.push({scores: ['5:5'], sportId: watchSportsIds.hockey});
         gameTester.push({scores: ['5:5'], sportId: watchSportsIds.hockey});
-        checkConditionsAndSendNotifications(gameTester.cachedGames);
+        checkSeriesAndNotify(gameTester.cachedGames);
         assert.equal(notifications.length, 0);
 
     });
@@ -94,14 +94,14 @@ describe("sendNotifications.notifyAboutScoreSeq", function () {
         notifications = [];
         gameTester.gamesArray[5].sportId = watchSportsIds.football;
         gameTester.gamesArray[6].sportId = watchSportsIds.football;
-        checkConditionsAndSendNotifications(gameTester.cachedGames, [SameScoreChecker]);
+        checkSeriesAndNotify(gameTester.cachedGames, [SameScoreChecker]);
         assert.equal(notifications.length, 1);
         assert.deepEqual(notifications[0].seqCount, {count: 6, score: '5:5'});
     });
     it("изменили очки 3 матча с конца- оборвали серию", () => {
         notifications = [];
         gameTester.gamesArray[4].scores = ['5:1'];
-        checkConditionsAndSendNotifications(gameTester.cachedGames, [SameScoreChecker]);
+        checkSeriesAndNotify(gameTester.cachedGames, [SameScoreChecker]);
         assert.equal(notifications.length, 0);
     });
 });

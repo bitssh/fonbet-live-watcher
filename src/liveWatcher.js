@@ -17,7 +17,7 @@ const seriesCheckerClasses = [
     TotalLessThanChecker
 ];
 
-function checkConditionsAndSendNotifications (gameMap, checkerClasses = seriesCheckerClasses) {
+function checkSeriesAndNotify (gameMap, checkerClasses = seriesCheckerClasses) {
     const games = gameMap.getGames(gameMap.lastGame.sportId);
 
     for (let SeriesCheckerClass of checkerClasses) {
@@ -64,7 +64,7 @@ exports.liveWatcher = {
                 this.appendToFile(game);
             }
             this.appendToConsole(game);
-            checkConditionsAndSendNotifications(this.gameFetcher.cachedGames, game);
+            checkSeriesAndNotify(this.gameFetcher.cachedGames, game);
         }
     },
     appendToFile(game) {
@@ -99,4 +99,4 @@ exports.liveWatcher = {
 
 };
 
-exports.checkConditionsAndSendNotifications = checkConditionsAndSendNotifications;
+exports.checkSeriesAndNotify = checkSeriesAndNotify;

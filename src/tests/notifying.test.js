@@ -38,7 +38,7 @@ describe("sendNotification", function () {
             timerSeconds: 190,
             sportId: watchSportsIds.hockey,
             sportName: 'Хоккей',
-            matchName: 'Красные - зеленые'
+            eventName: 'Красные - зеленые'
         });
         let checker = gameTester.createChecker();
         assert.equal(checker.checkCondition(), true);

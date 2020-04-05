@@ -15,7 +15,7 @@ class GameTester {
         const result = this.cachedGames.newGame(this.cachedGames.size);
         result.sportId = game.sportId || watchSportsIds.football;
         result.scores = game.scores;
-        result.matchName = game.matchName;
+        result.eventName = game.eventName;
         result.timerSeconds = game.timerSeconds;
         return result;
     }

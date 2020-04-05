@@ -41,6 +41,15 @@ class Game {
     get now () {
         return new Date().toLocaleString();
     }
+    get eventName () {
+        return this.event ? this.event.name : '';
+    }
+    set eventName (val) {
+        if (!this.event) {
+            this.event = {};
+        }
+        this.event.name = val;
+    }
     getTeamScore(teamNumber) {
         return Number(this.score.split(':')[teamNumber]);
     }

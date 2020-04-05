@@ -101,7 +101,7 @@ exports.liveWatcher = {
         clnStr = +clnStr >= config.watchNoGoalsCount - 1 ? String('C' + clnStr) : '  ';
 
         let logStr = `${game.now} ${sportName}${seqStr} ${clnStr} `
-            + `${game.event.id}  ${game.event.name} <${game.score}> ${timerSeconds} ${game.timerUpdate} `;
+            + `${game.event.id}  ${game.eventName} <${game.score}> ${timerSeconds} ${game.timerUpdate} `;
 
         const colorName = sportInfoByID[game.sportId].color;
         logStr = logStr[colorName];

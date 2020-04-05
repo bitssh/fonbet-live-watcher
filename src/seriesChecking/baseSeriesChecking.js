@@ -28,10 +28,10 @@ class BaseGameSeriesChecker {
         throw new Error(`some of ${this.name} class methods is not implemented`);
     }
     sendNotification() {
-        let {sportName, matchName} = this.lastGame;
+        let {sportName, eventName} = this.lastGame;
         sendNotification({
             sportName,
-            matchName,
+            eventName,
             text: this.notificationText
         });
     }

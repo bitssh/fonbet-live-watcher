@@ -26,10 +26,10 @@ let mailSender = {
     }
 };
 
-function sendNotification({sportName, matchName, text}) {
-    text = `${sportName} - ${text}` + (matchName ? `, ${matchName}` : '');
+function sendNotification({sportName, eventName, text}) {
+    text = `${sportName} - ${text}` + (eventName ? `, ${eventName}` : '');
     mailSender.send(text)
-        .then((info) => console.log('Message sent: '.green + `${text} ${info.messageId} `))
+        .then(() => console.log('Message sent: '.green + `${text} `))
         .catch(err => console.error(text + ' ' + err.message.red));
 }
 

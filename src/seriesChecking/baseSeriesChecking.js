@@ -81,8 +81,7 @@ class BaseEachGameSeriesChecker extends BaseGameSeriesChecker {
 class BaseEachNewGameSeriesChecker extends BaseEachGameSeriesChecker {
 
     checkCondition() {
-        // FIXME
-        if (this.lastGame.isNew && !this.lastGame.isNew()) {
+        if (!this.lastGame.isNew()) {
             return;
         }
         return super.checkCondition(this.games);

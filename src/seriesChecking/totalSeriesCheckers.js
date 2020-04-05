@@ -1,9 +1,9 @@
 const {BaseTotalSeriesChecker, COMPARISON_TYPE} = require("./baseSeriesChecking");
 const config = require("../config.js").common;
 
-class TotalMoreThanChecker extends BaseTotalSeriesChecker {
+class TotalGreaterThanChecker extends BaseTotalSeriesChecker {
     static getComparedTotalValue() {
-        return config.watchTotalSeqMoreThan;
+        return config.watchTotalSeqGreaterThan;
     }
     static get totalValueComparisonOperatorType() {
         return COMPARISON_TYPE.GREATER;
@@ -19,5 +19,5 @@ class TotalLessThanChecker extends BaseTotalSeriesChecker {
     }
 }
 
-exports.TotalMoreThanChecker = TotalMoreThanChecker;
+exports.TotalGreaterThanChecker = TotalGreaterThanChecker;
 exports.TotalLessThanChecker = TotalLessThanChecker;

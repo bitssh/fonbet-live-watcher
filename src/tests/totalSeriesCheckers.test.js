@@ -1,13 +1,13 @@
 const {describe, it} = require("mocha");
 const config = require("../config.js").common;
 const {GameTester} = require("./testTools.js");
-const {TotalMoreThanChecker, TotalLessThanChecker} = require("../seriesChecking/totalSeriesCheckers");
+const {TotalGreaterThanChecker, TotalLessThanChecker} = require("../seriesChecking/totalSeriesCheckers");
 
 config.watchTotalSeqCount = 3;
 config.watchTotalSeqLessThan = 7.5;
 
-describe("TotalMoreThanChecker", function () {
-    const gameTester = new GameTester(TotalMoreThanChecker);
+describe("TotalGreaterThanChecker", function () {
+    const gameTester = new GameTester(TotalGreaterThanChecker);
 
     it("все игры с тоталом меньше 7, результат 0", () => {
         gameTester.push({scores: ['0:7']});

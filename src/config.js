@@ -16,13 +16,13 @@ exports.common = {
     // например: Футбол - тотал меньше (больше) 7.5 в 5 матчах подряд
     watchTotalSeqCount: 5,
     watchTotalSeqLessThan: 7.5,
-    watchTotalSeqMoreThan: 7.5,
+    watchTotalSeqGreaterThan: 7.5,
 
     // Подсчёт индивидуальных тоталов
     // например: Синие - тотал голов больше 3.5 в 6 матчах подряд
     watchTeamTotalSeqCount: 5,
     watchTeamTotalSeqLessThan: 3.5,
-    watchTeamTotalSeqMoreThan: 3.5,
+    watchTeamTotalSeqGreaterThan: 3.5,
 
     // Победные серии команд
     watchTeamWinSeries: 5,

@@ -11,9 +11,9 @@ class BaseTeamScoreLessThanChecker extends BaseTeamTotalSeriesChecker {
     }
 }
 
-class BaseTeamScoreMoreThanChecker extends BaseTeamTotalSeriesChecker {
+class BaseTeamScoreGreaterThanChecker extends BaseTeamTotalSeriesChecker {
     static getComparedTotalValue() {
-        return config.watchTeamTotalSeqMoreThan;
+        return config.watchTeamTotalSeqGreaterThan;
     }
     static get totalValueComparisonOperatorType() {
         return COMPARISON_TYPE.GREATER;
@@ -32,19 +32,19 @@ class Team2ScoreLessThanChecker extends BaseTeamScoreLessThanChecker {
     }
 }
 
-class Team1ScoreMoreThanChecker extends BaseTeamScoreMoreThanChecker {
+class Team1ScoreGreaterThanChecker extends BaseTeamScoreGreaterThanChecker {
     static get teamNumber() {
         return 0;
     }
 }
 
-class Team2ScoreMoreThanChecker extends BaseTeamScoreMoreThanChecker {
+class Team2ScoreGreaterThanChecker extends BaseTeamScoreGreaterThanChecker {
     static get teamNumber() {
         return 1;
     }
 }
 
 exports.Team1ScoreLessThanChecker = Team1ScoreLessThanChecker;
-exports.Team1ScoreMoreThanChecker = Team1ScoreMoreThanChecker;
+exports.Team1ScoreGreaterThanChecker = Team1ScoreGreaterThanChecker;
 exports.Team2ScoreLessThanChecker = Team2ScoreLessThanChecker;
-exports.Team2ScoreMoreThanChecker = Team2ScoreMoreThanChecker;
+exports.Team2ScoreGreaterThanChecker = Team2ScoreGreaterThanChecker;

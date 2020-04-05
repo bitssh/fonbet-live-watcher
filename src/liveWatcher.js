@@ -5,7 +5,7 @@ const config = require("./config.js").common;
 const {sportInfoByID} = require("./config");
 const fileTools = require('./fileTools.js');
 const {getLastLine} = require("./fileTools");
-const {TotalMoreThanChecker, TotalLessThanChecker} = require("./seriesChecking/totalSeriesCheckers");
+const {TotalGreaterThanChecker, TotalLessThanChecker} = require("./seriesChecking/totalSeriesCheckers");
 const {SameScoreChecker} = require("./seriesChecking/SameScoreChecker");
 const {NoGoalSeriesChecker, GoalSeriesChecker} = require("./seriesChecking/goalSeriesCheckers");
 
@@ -13,7 +13,7 @@ const seriesCheckerClasses = [
     SameScoreChecker,
     NoGoalSeriesChecker,
     GoalSeriesChecker,
-    TotalMoreThanChecker,
+    TotalGreaterThanChecker,
     TotalLessThanChecker
 ];
 

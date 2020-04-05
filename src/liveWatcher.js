@@ -64,7 +64,7 @@ exports.liveWatcher = {
                 this.appendToFile(game);
             }
             this.appendToConsole(game);
-            checkSeriesAndNotify(this.gameFetcher.cachedGames, game);
+            checkSeriesAndNotify(this.gameFetcher.cachedGames);
         }
     },
     appendToFile(game) {

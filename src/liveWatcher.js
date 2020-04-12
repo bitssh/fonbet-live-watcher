@@ -4,6 +4,8 @@ require("colors");
 const config = require("./config.js").common;
 const {sportInfoByID} = require("./config");
 const fileTools = require('./fileTools.js');
+const {Team2UnbeatenSeriesChecker} = require("./seriesChecking/teamUnbeatenSeriesChecker");
+const {Team1UnbeatenSeriesChecker} = require("./seriesChecking/teamUnbeatenSeriesChecker");
 const {Team1WinChecker} = require("./seriesChecking/teamWinSeriesChecker");
 const {Team2ScoreLessThanChecker} = require("./seriesChecking/teamTotalSeriesCheckers");
 const {Team1ScoreLessThanChecker} = require("./seriesChecking/teamTotalSeriesCheckers");
@@ -27,6 +29,8 @@ const seriesCheckerClasses = [
     Team2ScoreLessThanChecker,
     Team1WinChecker,
     Team2WinChecker,
+    Team1UnbeatenSeriesChecker,
+    Team2UnbeatenSeriesChecker,
     TotalGreaterThanChecker,
     TotalLessThanChecker,
 ];

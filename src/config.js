@@ -27,6 +27,9 @@ exports.common = {
     // Победные серии команд
     watchTeamWinSeries: 6,
 
+    // Непроигрышные серии команд
+    watchTeamUnbeatenSeries: 6,
+
     // Если до 200 секунды сумма голов 8 - прислать уведомление
     watchTotalCountToSec: 1,
     watchTotalCount: 9,

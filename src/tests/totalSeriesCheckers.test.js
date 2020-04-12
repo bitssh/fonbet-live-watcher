@@ -5,6 +5,7 @@ const {TotalGreaterThanChecker, TotalLessThanChecker} = require("../seriesChecki
 
 config.watchTotalSeqCount = 3;
 config.watchTotalSeqLessThan = 7.5;
+config.watchTotalSeqGreaterThan = 7.5;
 
 describe("TotalGreaterThanChecker", function () {
     const gameTester = new GameTester(TotalGreaterThanChecker);

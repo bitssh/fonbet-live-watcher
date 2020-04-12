@@ -1,35 +1,35 @@
 // noinspection SpellCheckingInspection
 exports.common = {
     // Подсчёт одинаковых серий голов
-    watchScoreSeqCount: 3,
-    watchScoreSeq: ['1:1', '2:2', '0:2', '0:3', '0:4'],
+    watchScoreSeqCount: 6,
+    watchScoreSeq: ['1:1', '0:2', '0:3', '0:4', '2:2', '1:3'],
 
     // Подсчёт игр без голов после определённой секунды
-    watchNoGoalsCount: 3,
-    watchNoGoalsFromSec: 270,
+    watchNoGoalsCount: 6,
+    watchNoGoalsFromSec: 280,
 
     // Подсчёт игр с голами после определённой секунды
-    watchGoalsCount: 3,
-    watchGoalsFromSec: 270,
+    watchGoalsCount: 6,
+    watchGoalsFromSec: 280,
 
     // Подсчёт тоталов в конце матча (итоговая сумма голов)
     // например: Футбол - тотал меньше (больше) 7.5 в 5 матчах подряд
-    watchTotalSeqCount: 3,
-    watchTotalSeqLessThan: 7.5,
-    watchTotalSeqGreaterThan: 7.5,
+    watchTotalSeqCount: 10,
+    watchTotalSeqLessThan: 0.5,
+    watchTotalSeqGreaterThan: 17.5,
 
     // Подсчёт индивидуальных тоталов
     // например: Синие - тотал голов больше 3.5 в 6 матчах подряд
-    watchTeamTotalSeqCount: 3,
-    watchTeamTotalSeqLessThan: 3.5,
-    watchTeamTotalSeqGreaterThan: 3.5,
+    watchTeamTotalSeqCount: 10,
+    watchTeamTotalSeqLessThan: 0.5,
+    watchTeamTotalSeqGreaterThan: 12.5,
 
     // Победные серии команд
-    watchTeamWinSeries: 3,
+    watchTeamWinSeries: 6,
 
     // Если до 200 секунды сумма голов 8 - прислать уведомление
-    watchTotalCountToSec: 200,
-    watchTotalCount: 6,
+    watchTotalCountToSec: 1,
+    watchTotalCount: 9,
 
     cachedGamesSize: 200,
     useDummyUrl: false,
@@ -47,15 +47,15 @@ exports.watchSportsIds = sportsIds;
 exports.sportInfoByID = {
     [sportsIds.football]: {
         name: 'Футбол',
-        color: 'blue',
+        color: 'cyan',
     },
     [sportsIds.hockey]: {
         name: 'Хоккей',
-        color: 'yellow',
+        color: 'brightGreen',
     },
     [sportsIds.basketball]: {
         name: 'Баскетбол',
-        color: 'green',
+        color: 'grey',
     },
 };
 

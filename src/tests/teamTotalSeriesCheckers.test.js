@@ -28,7 +28,11 @@ describe("Team1ScoreLessThanChecker", () => {
         gameTester.push({scores: ['3:4']});
         gameTester.assertSeqCountEquals(4);
     });
+    it("проверка несрабатывания оповещения", () => {
+        gameTester.assertNotificationText('');
+    });
     it("проверка текста оповещения", () => {
+        config.watchTeamTotalSeqCount = 4;
         gameTester.assertNotificationText('1 команда - тотал меньше 3.5 в 4 матчах подряд');
     });
     it("в следующей игре тотал больше 3.5 - результат 0", () => {
@@ -64,7 +68,11 @@ describe("Team2ScoreGreaterThanChecker", () => {
         gameTester.push({scores: ['4:7']});
         gameTester.assertSeqCountEquals(3);
     });
+    it("проверка несрабатывания оповещения", () => {
+        gameTester.assertNotificationText('');
+    });
     it("проверка текста оповещения", () => {
+        config.watchTeamTotalSeqCount = 3;
         gameTester.assertNotificationText('2 команда - тотал больше 6.5 в 3 матчах подряд');
     });
     it("в следующей игре тотал меньше 6.5 - результат 0", () => {

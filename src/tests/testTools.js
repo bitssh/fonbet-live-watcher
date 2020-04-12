@@ -29,7 +29,9 @@ class GameTester {
         assert.deepEqual(this.calcSeqCount(), object);
     }
     assertNotificationText(text) {
-        assert.equal(this.createChecker().notificationText, text);
+        let checker = this.createChecker();
+        let notificationText = checker.checkCondition() ? checker.notificationText : '';
+        assert.equal(notificationText, text);
     }
     createChecker() {
         let result = new this.checkerClass(this.gamesArray);
@@ -37,7 +39,9 @@ class GameTester {
         // BaseEachGameSeriesChecker classes removes last game
         // so we need to forcibly push last game duplicate to achieve the same game count
         if (result.games.length === this.gamesArray.length - 1) {
-            result = new this.checkerClass([...this.gamesArray, this.cachedGames.lastGame]);
+            const lastNewGame = this.cachedGames.lastGame;
+            lastNewGame.isNew = () => true;
+            result = new this.checkerClass([...this.gamesArray, lastNewGame]);
         }
         return result;
     }

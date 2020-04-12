@@ -8,6 +8,8 @@ const {BaseGameSeriesChecker} = require("../seriesChecking/baseSeriesChecking");
 const {checkSeriesAndNotify} = require("../liveWatcher");
 const {watchSportsIds} = require("../config");
 
+config.watchScoreSeqCount = 4;
+
 describe("SameScoreChecker", () => {
 
     const gameTester = new GameTester(SameScoreChecker);
@@ -35,6 +37,10 @@ describe("SameScoreChecker", () => {
         gameTester.assertSeqCountDeepEquals({count: 3, score: '1:0'});
     });
     it("проверка текста оповещения", () => {
+        gameTester.assertNotificationText('');
+    });
+    it("проверка текста оповещения с актуальным значением в конфиге", () => {
+        config.watchScoreSeqCount = 3;
         gameTester.assertNotificationText('серия из 3 матчей 1:0');
     });
 });

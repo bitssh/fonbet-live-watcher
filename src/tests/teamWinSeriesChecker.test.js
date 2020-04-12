@@ -3,7 +3,7 @@ const config = require("../config.js").common;
 const {GameTester} = require("./testTools.js");
 const {Team1WinChecker, Team2WinChecker} = require("../seriesChecking/teamWinSeriesChecker");
 
-config.watchTeamWinSeries = 5;
+config.watchTeamWinSeries = 6;
 
 describe("Team1WinChecker", () => {
 
@@ -29,9 +29,15 @@ describe("Team1WinChecker", () => {
         gameTester.push({scores: ['5:4']});
         gameTester.assertSeqCountEquals(5);
     });
-    it("проверка текста оповещения", () => {
-        gameTester.assertNotificationText('1 команда - победная серия 5 матчей');
+    it("пустое оповещение т.к. в в конфиге задана минимальная серия в 6 побед", () => {
+        gameTester.assertNotificationText('');
     });
+    it("добавили 6ю победу, есть оповещение", () => {
+        gameTester.push({scores: ['5:4']});
+        gameTester.assertNotificationText('1 команда - победная серия 6 матчей');
+    });
+
+
 });
 
 describe("Team2WinChecker", () => {
@@ -47,10 +53,14 @@ describe("Team2WinChecker", () => {
         gameTester.push({scores: ['0:4']});
         gameTester.push({scores: ['0:1']});
         gameTester.push({scores: ['0:1']});
-        gameTester.assertSeqCountEquals(7);
+        gameTester.push({scores: ['0:4']});
+        gameTester.push({scores: ['0:1']});
+        gameTester.push({scores: ['0:1']});
+        gameTester.push({scores: ['0:1']});
+        gameTester.assertSeqCountEquals(11);
     });
     it("проверка текста оповещения", () => {
-        gameTester.assertNotificationText('2 команда - победная серия 7 матчей');
+        gameTester.assertNotificationText('2 команда - победная серия 11 матчей');
     });
     it('оборвали серию в конце', () => {
         gameTester.push({scores: ['6:8']});

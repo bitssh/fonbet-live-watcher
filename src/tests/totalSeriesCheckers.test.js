@@ -3,7 +3,7 @@ const config = require("../config.js").common;
 const {GameTester} = require("./testTools.js");
 const {TotalGreaterThanChecker, TotalLessThanChecker} = require("../seriesChecking/totalSeriesCheckers");
 
-config.watchTotalSeqCount = 3;
+config.watchTotalSeqCount = 6;
 config.watchTotalSeqLessThan = 7.5;
 config.watchTotalSeqGreaterThan = 7.5;
 
@@ -38,12 +38,16 @@ describe("TotalGreaterThanChecker", function () {
         gameTester.push({scores: ['11:11']});
         gameTester.assertSeqCountEquals(5);
     });
+        it("проверка пустого оповещения", () => {
+        gameTester.assertNotificationText('');
+    });
+    it("проверка текста оповещения", () => {
+        config.watchTotalSeqCount = 4;
+        gameTester.assertNotificationText('тотал больше 7.5 в 5 матчах подряд');
+    });
     it("в следующей игре тотал меньше 7.5 - результат 0", () => {
         gameTester.push({scores: ['3:4']});
         gameTester.assertSeqCountEquals(0);
-    });
-    it("проверка текста оповещения", () => {
-        gameTester.assertNotificationText('тотал больше 7.5 в 0 матчах подряд');
     });
 });
 

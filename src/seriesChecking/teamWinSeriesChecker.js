@@ -1,8 +1,12 @@
 const {BaseTeamTotalSeriesChecker} = require("./baseSeriesChecking");
+const config = require("../config.js").common;
 
 class BaseTeamWinChecker extends BaseTeamTotalSeriesChecker {
     get notificationText() {
         return `${this.constructor.teamNumber + 1} команда - победная серия ${this.seqCount} матчей`;
+    }
+    get seqCountTrigger() {
+        return config.watchTeamWinSeries;
     }
 }
 

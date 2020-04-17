@@ -1,7 +1,7 @@
 const {describe, it, before, after} = require("mocha");
 const {liveWatcher} = require("../liveWatcher.js");
 const assert = require("assert");
-const config = require("../config.js").common;
+const {customConfig} = require("../config");
 const {GameTester} = require("./testTools.js");
 const {NoGoalSeriesChecker, GoalSeriesChecker} = require("../seriesChecking/goalSeriesCheckers");
 const {BaseGameSeriesChecker} = require("../seriesChecking/baseSeriesChecking");
@@ -13,8 +13,8 @@ describe("NoGoalSeriesChecker", function () {
     const gameTester = new GameTester(NoGoalSeriesChecker);
 
     before(() => {
-        config.watchNoGoalsCount = 3;
-        config.watchNoGoalsFromSec = 250;
+        customConfig.noGoalsSeries = 3;
+        customConfig.noGoalsFromSec = 250;
     });
     it("нет игр - 0 игр без голов", () => {
         gameTester.assertSeqCountEquals(0);
@@ -50,8 +50,8 @@ describe("GoalSeriesChecker", function () {
     const gameTester = new GameTester(GoalSeriesChecker);
 
     before(() => {
-        config.watchGoalsCount = 3;
-        config.watchGoalsFromSec = 250;
+        customConfig.goalsSeries = 3;
+        customConfig.goalsFromSec = 250;
     });
     it("нет игр - 0 игр с голами", () => {
         gameTester.assertSeqCountEquals(0);
@@ -92,8 +92,8 @@ describe("sendNotifications.notifyAboutNoGoals", function () {
     let notifications = [];
     let sendNotificationFuncBackup;
     before(() => {
-        config.watchNoGoalsCount = 3;
-        config.watchNoGoalsFromSec = 270;
+        customConfig.noGoalsSeries = 3;
+        customConfig.noGoalsFromSec = 270;
 
         sendNotificationFuncBackup = BaseGameSeriesChecker.prototype.sendNotification;
         BaseGameSeriesChecker.prototype.sendNotification = function () {

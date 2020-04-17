@@ -1,20 +1,19 @@
 const assert = require("assert");
 
 const {describe, it, before, after} = require("mocha");
-const config = require("../config.js").common;
+const {football, hockey} = require("../config");
 const {GameTester} = require("./testTools.js");
 const {SameScoreChecker,} = require("../seriesChecking/SameScoreChecker");
 const {BaseGameSeriesChecker} = require("../seriesChecking/baseSeriesChecking");
 const {checkSeriesAndNotify} = require("../liveWatcher");
-const {watchSportsIds} = require("../config");
 
-config.watchScoreSeqCount = 4;
+football.scoreSeries = 4;
 
 describe("SameScoreChecker", () => {
 
     const gameTester = new GameTester(SameScoreChecker);
     let game;
-    config.watchScoreSeq = [];
+    football.scoreSeriesValues = [];
     it("1 игра, результат = 1", () => {
         gameTester.push({scores: ['0:0', '0:1', '0:2']});
         gameTester.assertSeqCountDeepEquals({count: 1, score: '0:2'});
@@ -23,8 +22,8 @@ describe("SameScoreChecker", () => {
         game = gameTester.push({scores: ['0:1']});
         gameTester.assertSeqCountDeepEquals({count: 1, score: '0:1'});
     });
-    it("Задали значения watchScoreSeq, результат = 2", () => {
-        config.watchScoreSeq = ['5:5', '1:0', '6:6'];
+    it("Задали значения scoreSeriesValues, результат = 2", () => {
+        football.scoreSeriesValues = ['5:5', '1:0', '6:6'];
         gameTester.assertSeqCountDeepEquals({count: 2, score: '0:1'});
     });
     it("Последний гол поломал последовательность, результат = 1", () => {
@@ -40,7 +39,7 @@ describe("SameScoreChecker", () => {
         gameTester.assertNotificationText('');
     });
     it("проверка текста оповещения с актуальным значением в конфиге", () => {
-        config.watchScoreSeqCount = 3;
+        football.scoreSeries = 3;
         gameTester.assertNotificationText('серия из 3 матчей 1:0');
     });
 });
@@ -56,8 +55,8 @@ describe("sendNotifications.notifyAboutScoreSeq", function () {
         BaseGameSeriesChecker.prototype.sendNotification = function () {
             notifications.push(this);
         };
-        config.watchScoreSeq = [];
-        config.watchScoreSeqCount = 3;
+        football.scoreSeriesValues = [];
+        football.scoreSeries = 3;
     });
     after(() => {
         BaseGameSeriesChecker.prototype.sendNotification = sendNotificationFuncBackup;
@@ -72,10 +71,10 @@ describe("sendNotifications.notifyAboutScoreSeq", function () {
     });
     it("3 серии и задан массив очков", () => {
         notifications = [];
-        config.watchScoreSeq = ['4:4'];
+        football.scoreSeriesValues = ['4:4'];
         checkSeriesAndNotify(gameTester.cachedGames.games);
         assert.equal(notifications.length, 0);
-        config.watchScoreSeq = ['4:4', '5:5', '6:6'];
+        football.scoreSeriesValues = ['4:4', '5:5', '6:6'];
         checkSeriesAndNotify(gameTester.cachedGames.games);
         assert.equal(notifications.length, 1);
         assert.deepEqual(notifications[0].seqCount, {count: 3, score: '5:5'});
@@ -90,17 +89,25 @@ describe("sendNotifications.notifyAboutScoreSeq", function () {
     });
     it("добавили 2 матча с хоккеем - оповещений нет", () => {
         notifications = [];
-        gameTester.push({scores: ['5:5'], sportId: watchSportsIds.hockey});
-        gameTester.push({scores: ['5:5'], sportId: watchSportsIds.hockey});
+        gameTester.push({scores: ['5:5'], sportId: hockey.sportId});
+        gameTester.push({scores: ['5:5'], sportId: hockey.sportId});
         checkSeriesAndNotify(gameTester.cachedGames.games);
-        // FIXME
-        // assert.equal(notifications.length, 0);
+        assert.equal(notifications.length, 0);
+
+    });
+    it("прописали для хоккея подходящие условия, есть оповещение", () => {
+        notifications = [];
+        hockey.scoreSeriesValues = ['5:5'];
+        hockey.scoreSeries = 2;
+        checkSeriesAndNotify(gameTester.cachedGames.games);
+        assert.equal(notifications.length, 1);
+        assert.deepEqual(notifications[0].seqCount, {count: 6, score: '5:5'});
 
     });
     it("изменили 2 последних матча на футбол - продолжили серию до 6", () => {
         notifications = [];
-        gameTester.gamesArray[5].sportId = watchSportsIds.football;
-        gameTester.gamesArray[6].sportId = watchSportsIds.football;
+        gameTester.gamesArray[5].sportId = football.sportId;
+        gameTester.gamesArray[6].sportId = football.sportId;
         checkSeriesAndNotify(gameTester.cachedGames.games, [SameScoreChecker]);
         assert.equal(notifications.length, 1);
         assert.deepEqual(notifications[0].seqCount, {count: 6, score: '5:5'});

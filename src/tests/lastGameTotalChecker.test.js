@@ -1,10 +1,10 @@
 const {describe, it} = require("mocha");
-const config = require("../config.js").common;
 const {GameTester} = require("./testTools.js");
+const {customConfig} = require("../config");
 const {LastGameTotalChecker} = require("../seriesChecking/LastGameTotalChecker");
 
-config.watchTotalCount = 8;
-config.watchTotalCountToSec = 200;
+customConfig.totalCount = 8;
+customConfig.totalCountToSec = 200;
 
 describe("LastGameTotalChecker", function () {
     let game;

@@ -1,11 +1,11 @@
 const {describe, it} = require("mocha");
-const config = require("../config.js").common;
+const {customConfig} = require("../config");
 const {GameTester} = require("./testTools.js");
 const {Team1ScoreLessThanChecker, Team2ScoreGreaterThanChecker} = require("../seriesChecking/teamTotalSeriesCheckers");
 
-config.watchTeamTotalSeqCount = 5;
-config.watchTeamTotalSeqLessThan = 3.5;
-config.watchTeamTotalSeqGreaterThan = 6.5;
+customConfig.teamTotalSeries = 5;
+customConfig.teamTotalLessThan = 3.5;
+customConfig.teamTotalGreaterThan = 6.5;
 
 describe("Team1ScoreLessThanChecker", () => {
 
@@ -32,7 +32,7 @@ describe("Team1ScoreLessThanChecker", () => {
         gameTester.assertNotificationText('');
     });
     it("проверка текста оповещения", () => {
-        config.watchTeamTotalSeqCount = 4;
+        customConfig.teamTotalSeries = 4;
         gameTester.assertNotificationText('1 команда - тотал меньше 3.5 в 4 матчах подряд');
     });
     it("в следующей игре тотал больше 3.5 - результат 0", () => {
@@ -72,7 +72,7 @@ describe("Team2ScoreGreaterThanChecker", () => {
         gameTester.assertNotificationText('');
     });
     it("проверка текста оповещения", () => {
-        config.watchTeamTotalSeqCount = 3;
+        customConfig.teamTotalSeries = 3;
         gameTester.assertNotificationText('2 команда - тотал больше 6.5 в 3 матчах подряд');
     });
     it("в следующей игре тотал меньше 6.5 - результат 0", () => {

@@ -17,12 +17,12 @@ let mailSender = {
             await transporter.verify();
             return;
         }
-        return await transporter.sendMail({
-            from: mail.sender,
-            to: mail.recipients,
-            subject: mail.subject,
-            text: message,
-        });
+        // return await transporter.sendMail({
+        //     from: mail.sender,
+        //     to: mail.recipients,
+        //     subject: mail.subject,
+        //     text: message,
+        // });
     }
 };
 

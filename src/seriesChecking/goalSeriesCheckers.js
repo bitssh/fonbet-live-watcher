@@ -1,28 +1,27 @@
 const {BaseEachNewGameSeriesChecker} = require("./baseSeriesChecking");
-const config = require("../config.js").common;
 
 class GoalSeriesChecker extends BaseEachNewGameSeriesChecker {
     get seqCountTrigger () {
-        return config.watchGoalsCount;
+        return this.config.goalsSeries;
     }
     get notificationText() {
-        return  `голы в ${this.seqCount} матчах с ${config.watchGoalsFromSec} секунды`;
+        return  `голы в ${this.seqCount} матчах с ${this.config.goalsFromSec} секунды`;
     }
-    static checkGameCondition(game) {
-        return game.timerSeconds && game.timerSeconds >= config.watchNoGoalsFromSec;
+    checkGameCondition(game) {
+        return game.timerSeconds && game.timerSeconds >= this.config.noGoalsFromSec;
     }
 }
 
 class NoGoalSeriesChecker extends BaseEachNewGameSeriesChecker {
     get seqCountTrigger () {
-        return config.watchNoGoalsCount;
+        return this.config.noGoalsSeries;
     }
     get notificationText() {
-        return  `нет голов в ${this.seqCount} матчах с ${config.watchNoGoalsFromSec} секунды`;
+        return  `нет голов в ${this.seqCount} матчах с ${this.config.noGoalsFromSec} секунды`;
     }
-    static checkGameCondition(game) {
+    checkGameCondition(game) {
         // стоит ли учитывать игры вообще без голов?
-        return game.timerSeconds && game.timerSeconds < config.watchNoGoalsFromSec;
+        return game.timerSeconds && game.timerSeconds < this.config.noGoalsFromSec;
     }
 }
 

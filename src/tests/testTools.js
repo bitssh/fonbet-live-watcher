@@ -1,5 +1,5 @@
 const {GameMap} = require("../game");
-const {watchSportsIds} = require("../config");
+const {football} = require("../config");
 const assert = require("assert");
 
 class GameTester {
@@ -13,14 +13,15 @@ class GameTester {
     }
     push(game) {
         const result = this.cachedGames.newGame(this.cachedGames.size);
-        result.sportId = game.sportId || watchSportsIds.football;
+        result.sportId = game.sportId || football.sportId;
         result.scores = game.scores;
         result.eventName = game.eventName;
         result.timerSeconds = game.timerSeconds;
         return result;
     }
     calcSeqCount() {
-        return this.checkerClass.calcSeqCount(this.gamesArray);
+        let checker = this.createChecker();
+        return checker.calcSeqCount(checker.games);
     }
     assertSeqCountEquals(count) {
         assert.equal(this.calcSeqCount(), count);
@@ -34,16 +35,16 @@ class GameTester {
         assert.equal(notificationText, text);
     }
     createChecker() {
-        let result = new this.checkerClass(this.gamesArray);
+        let checker = new this.checkerClass(this.gamesArray);
 
         // BaseEachGameSeriesChecker classes removes last game
         // so we need to forcibly push last game duplicate to achieve the same game count
-        if (result.games.length === this.gamesArray.length - 1) {
+        if (checker.games.length === this.gamesArray.length - 1) {
             const lastNewGame = this.cachedGames.lastGame;
             lastNewGame.isNew = () => true;
-            result = new this.checkerClass([...this.gamesArray, lastNewGame]);
+            checker = new this.checkerClass([...this.gamesArray, lastNewGame]);
         }
-        return result;
+        return checker;
     }
 }
 

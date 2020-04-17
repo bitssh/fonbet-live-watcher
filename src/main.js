@@ -1,5 +1,5 @@
 const liveWatcher = require('./liveWatcher.js').liveWatcher;
-const config = require("./config.js").common;
+const {parameters} = require("./config.js");
 require("colors");
 
 console.log('initialized');
@@ -12,7 +12,7 @@ liveWatcher.initialize();
         console.error(err.message.red);
     }
     if (!liveWatcher.useDummyUrl) {
-        setTimeout(watch, config.fetchTimeout);
+        setTimeout(watch, parameters.fetchTimeout);
     }
 })();
 

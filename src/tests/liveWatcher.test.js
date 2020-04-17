@@ -1,14 +1,14 @@
 const {liveWatcher} = require("../liveWatcher.js");
 const {describe, it} = require("mocha");
 const assert = require("assert");
-const config = require("../config.js").common;
+const {parameters} = require("../config.js");
 const {hasScore} = require("../seriesChecking/SameScoreChecker");
 const cachedGames = liveWatcher.gameFetcher.cachedGames;
 
 it("getAndCheckUpdates - граббинг тестовых данных", function () {
     cachedGames.clear();
-    config.fileWritingEnabled = false;
-    config.useDummyUrl = true;
+    parameters.fileWritingEnabled = false;
+    parameters.useDummyUrl = true;
     liveWatcher.getAndCheckUpdates();
     liveWatcher.getAndCheckUpdates();
     liveWatcher.getAndCheckUpdates();

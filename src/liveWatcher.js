@@ -1,8 +1,8 @@
 "use strict";
 // https://www.fonbet.ru/#!/live/rocket-league
 require("colors");
-const config = require("./config.js").common;
-const {sportInfoByID} = require("./config");
+const {parameters} = require("./config.js");
+const {sportConfigByID} = require("./config");
 const fileTools = require('./fileTools.js');
 const {Team2UnbeatenSeriesChecker} = require("./seriesChecking/teamUnbeatenSeriesChecker");
 const {Team1UnbeatenSeriesChecker} = require("./seriesChecking/teamUnbeatenSeriesChecker");
@@ -68,7 +68,7 @@ exports.liveWatcher = {
         let fetchedGames = await this.gameFetcher.fetchUpdates();
         if (!fetchedGames || !fetchedGames.size)
             return;
-        if (this.gameFetcher.cachedGames.size > config.cachedGamesSize) {
+        if (this.gameFetcher.cachedGames.size > parameters.cachedGamesSize) {
             this.gameFetcher.shrinkCache();
         }
         for (let game of fetchedGames) {
@@ -76,7 +76,7 @@ exports.liveWatcher = {
                 console.error(`score is null for game ${game.event.id}`.red);
                 return;
             }
-            if (config.fileWritingEnabled) {
+            if (parameters.fileWritingEnabled) {
                 this.appendToFile(game);
             }
             this.appendToConsole(game);
@@ -95,19 +95,13 @@ exports.liveWatcher = {
 
     },
     appendToConsole(game) {
-        const games = this.gameFetcher.cachedGames.getGames(game.sportId);
         const timerSeconds = game.timerSeconds ? game.timerSeconds : '   ';
         const sportName = game.sportName.padEnd(10, ' ');
 
-        let seqStr = SameScoreChecker.calcSeqCount(games).count;
-        let clnStr = NoGoalSeriesChecker.calcSeqCount(games);
-        seqStr = +seqStr >= config.watchScoreSeqCount - 1 ? String('S' + seqStr) : '  ';
-        clnStr = +clnStr >= config.watchNoGoalsCount - 1 ? String('C' + clnStr) : '  ';
-
-        let logStr = `${game.now} ${sportName}${seqStr} ${clnStr} `
+        let logStr = `${game.now} ${sportName} `
             + `${game.event.id}  ${game.eventName} <${game.score}> ${timerSeconds} ${game.timerUpdate} `;
 
-        const colorName = sportInfoByID[game.sportId].color;
+        const colorName = sportConfigByID[game.sportId].color;
         logStr = logStr[colorName];
         console.log(game.isNew() ? logStr.grey : logStr);
 

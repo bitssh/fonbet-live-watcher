@@ -1,13 +1,21 @@
+const {customConfig} = require("../config");
+const {sportConfigByID} = require("../config");
 const {sendNotification} = require("../notifying");
-const config = require("../config.js").common;
 
 class BaseGameSeriesChecker {
     constructor(games) {
         this.games = games.slice();
+
+        if (this.lastGame) {
+            this.config = sportConfigByID[this.lastGame.sportId];
+        }
+        if (!this.config) {
+            this.config = customConfig;
+        }
     }
     get seqCount() {
         if (!this._seqCount) {
-            this._seqCount = this.constructor.calcSeqCount(this.games);
+            this._seqCount = this.calcSeqCount(this.games);
         }
         return this._seqCount;
     }
@@ -18,12 +26,12 @@ class BaseGameSeriesChecker {
         return this.games[this.games.length - 1];
     }
     get notificationText() {
-        this.constructor.throwMethodNotImplementedError();
+        this.throwMethodNotImplementedError();
     }
-    static calcSeqCount() {
+    calcSeqCount() {
         return 0;
     }
-    static throwMethodNotImplementedError() {
+    throwMethodNotImplementedError() {
         // noinspection JSUnresolvedVariable
         throw new Error(`some of ${this.name} class methods is not implemented`);
     }
@@ -50,13 +58,13 @@ class BaseEachGameSeriesChecker extends BaseGameSeriesChecker {
     get lastGame() {
         return this._lastGame;
     }
-    static checkGameCondition() {
+    checkGameCondition() {
         return false;
     }
-    static getSwitchableGameConditionResult(game) {
+    getSwitchableGameConditionResult(game) {
         return this.checkGameCondition(game) ? 1 : -1;
     }
-    static iterateGame(game) {
+    iterateGame(game) {
         let result = Math.sign(this.getSwitchableGameConditionResult(game));
         return {
             [-1]: {doBreak: true, countIncrement: 0},
@@ -65,7 +73,7 @@ class BaseEachGameSeriesChecker extends BaseGameSeriesChecker {
             [NaN]: {countIncrement: 0},
         }[result];
     }
-    static calcSeqCount(games) {
+    calcSeqCount(games) {
         let count = 0;
         for (let game of games.reverse()) {
             let result = this.iterateGame(game);
@@ -101,23 +109,23 @@ const COMPARISON_TYPE = {
 };
 
 class BaseTotalSeriesChecker extends BaseEachNewGameSeriesChecker {
-    static get totalValueComparisonOperatorType() {
+    get totalValueComparisonOperatorType() {
         return null;
     }
-    static getComparedTotalValue() {
+    getComparedTotalValue() {
         this.throwMethodNotImplementedError();
     }
     get seqCountTrigger() {
-        return config.watchTotalSeqCount;
+        return this.config.totalSeries;
     }
     get notificationText() {
-        return `тотал ${this.constructor.totalValueComparisonOperatorType} ${this.constructor.getComparedTotalValue()}` +
+        return `тотал ${this.totalValueComparisonOperatorType} ${this.getComparedTotalValue()}` +
             ` в ${this.seqCount} матчах подряд`;
     }
-    static getCurrentTotal(game) {
+    getCurrentTotal(game) {
         return game.total;
     }
-    static getSwitchableGameConditionResult(game) {
+    getSwitchableGameConditionResult(game) {
         let result = this.getCurrentTotal(game) - this.getComparedTotalValue(game);
         if (this.totalValueComparisonOperatorType === COMPARISON_TYPE.LESS) {
             result = result * - 1;
@@ -127,16 +135,16 @@ class BaseTotalSeriesChecker extends BaseEachNewGameSeriesChecker {
 }
 
 class BaseTeamTotalSeriesChecker extends BaseTotalSeriesChecker {
-    static get teamNumber() {
+    get teamNumber() {
         this.throwMethodNotImplementedError();
     }
     get seqCountTrigger() {
-        return config.watchTeamTotalSeqCount;
+        return this.config.teamTotalSeries;
     }
     get notificationText() {
-        return `${this.constructor.teamNumber + 1} команда - ${super.notificationText}`;
+        return `${this.teamNumber + 1} команда - ${super.notificationText}`;
     }
-    static getCurrentTotal(game) {
+    getCurrentTotal(game) {
         return game.getTeamScore(this.teamNumber);
     }
 }

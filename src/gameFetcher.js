@@ -1,8 +1,8 @@
 const Game = require("./game").Game;
 const GameMap = require("./game").GameMap;
-const config = require("./config.js").common;
+const {parameters} = require("./config.js");
 const fetch = require('node-fetch');
-const {sportInfoByID} = require("./config");
+const {sportConfigByID} = require("./config");
 
 exports.gameFetcher = {
     subDomains: ['line11', 'line12', 'line16', 'line31'],
@@ -13,7 +13,7 @@ exports.gameFetcher = {
     async fetchUpdates() {
         let url = (() => {
             let result;
-            if (config.useDummyUrl) {
+            if (parameters.useDummyUrl) {
                 result = this.lastPacketVersion
                     ? `./../response-test/updatesFromVersion-${this.lastPacketVersion}.json`
                     : './../response-test/currentLine.json';
@@ -27,7 +27,7 @@ exports.gameFetcher = {
         })();
 
         let responseData;
-        if (config.useDummyUrl) {
+        if (parameters.useDummyUrl) {
             responseData = require(url);
         } else {
             let response = await fetch(url);
@@ -61,7 +61,7 @@ exports.gameFetcher = {
                 this.sportsIDs.add(sport.id);
             }
 
-        let events = responseData.events.filter(event => event.sportId in sportInfoByID);
+        let events = responseData.events.filter(event => event.sportId in sportConfigByID);
 
         let result = new Set();
         for (let event of events) {

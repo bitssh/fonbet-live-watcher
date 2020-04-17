@@ -1,4 +1,4 @@
-const {sportInfoByID} = require("./config");
+const {sportConfigByID} = require("./config");
 
 class Game {
 
@@ -31,7 +31,7 @@ class Game {
         this.event.sportId = val;
     }
     get sportName() {
-        return sportInfoByID[this.sportId].name;
+        return sportConfigByID[this.sportId].label;
     }
     get timerUpdate() {
         return !this.miscs.timerUpdateTimestamp

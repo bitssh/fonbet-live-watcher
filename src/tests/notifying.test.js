@@ -3,7 +3,7 @@ const {GameTester} = require("./testTools");
 const {describe, it, before} = require("mocha");
 const assert = require("assert");
 const notifying = require('../notifying.js');
-const {watchSportsIds} = require("../config");
+const {hockey} = require("../config");
 //
 // it("проверка авторизации почтовой учётки на stmp" , function(done){
 //
@@ -36,8 +36,7 @@ describe("sendNotification", function () {
         gameTester.push({
             scores: ['6:2'],
             timerSeconds: 190,
-            sportId: watchSportsIds.hockey,
-            sportName: 'Хоккей',
+            sportId: hockey.sportId,
             eventName: 'Красные - зеленые'
         });
         let checker = gameTester.createChecker();

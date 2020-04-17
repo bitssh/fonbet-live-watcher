@@ -1,13 +1,12 @@
 const {BaseLastGameChecker} = require("./baseSeriesChecking");
-const config = require("../config.js").common;
 
 class LastGameTotalChecker extends BaseLastGameChecker {
     get notificationText() {
-        return  `до ${config.watchTotalCountToSec} секунды сумма голов ${config.watchTotalCount}`;
+        return  `до ${this.config.totalCountToSec} секунды сумма голов ${this.config.totalCount}`;
     }
-    static checkGameCondition(game) {
-        return (game.timerSeconds < config.watchTotalCountToSec)
-            && (game.total === config.watchTotalCount);
+    checkGameCondition(game) {
+        return (game.timerSeconds < this.config.totalCountToSec)
+            && (game.total === this.config.totalCount);
     }
 }
 

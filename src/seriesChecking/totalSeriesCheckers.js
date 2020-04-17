@@ -1,20 +1,19 @@
 const {BaseTotalSeriesChecker, COMPARISON_TYPE} = require("./baseSeriesChecking");
-const config = require("../config.js").common;
 
 class TotalGreaterThanChecker extends BaseTotalSeriesChecker {
-    static getComparedTotalValue() {
-        return config.watchTotalSeqGreaterThan;
+    getComparedTotalValue() {
+        return this.config.totalGreaterThan;
     }
-    static get totalValueComparisonOperatorType() {
+    get totalValueComparisonOperatorType() {
         return COMPARISON_TYPE.GREATER;
     }
 }
 
 class TotalLessThanChecker extends BaseTotalSeriesChecker {
-    static getComparedTotalValue() {
-        return config.watchTotalSeqLessThan;
+    getComparedTotalValue() {
+        return this.config.totalLessThan;
     }
-    static get totalValueComparisonOperatorType() {
+    get totalValueComparisonOperatorType() {
         return COMPARISON_TYPE.LESS;
     }
 }

@@ -1,5 +1,4 @@
 const {BaseGameSeriesChecker} = require("./baseSeriesChecking");
-const config = require("../config.js").common;
 
 const reversedScore = (score) => score.split(':').reverse().join(':');
 
@@ -9,17 +8,17 @@ function hasScore(list, score) {
 
 class SameScoreChecker extends BaseGameSeriesChecker {
     get seqCountTrigger () {
-        return config.watchScoreSeqCount;
+        return this.config.scoreSeries;
     }
     get notificationText() {
         return `серия из ${this.seqCount.count} матчей ${this.seqCount.score}`;
     }
-    static calcSeqCount(games) {
+    calcSeqCount(games) {
         let count = 1;
         let score;
         if (games.length && games[games.length - 1].score) {
             score = games[games.length - 1].score;
-            if (hasScore(config.watchScoreSeq, score)) {
+            if (hasScore(this.config.scoreSeriesValues, score)) {
                 for (let i = games.length - 2; i >= 0; i -= 1) {
                     const game = games[i];
                     if (!game.score)

@@ -1,14 +1,13 @@
 const {BaseTeamTotalSeriesChecker} = require("./baseSeriesChecking");
-const config = require("../config.js").common;
 
 class BaseTeamUnbeatenSeriesChecker extends BaseTeamTotalSeriesChecker {
     get notificationText() {
-        return `${this.constructor.teamNumber + 1} команда не проигрывает в ${this.seqCount} матчах`;
+        return `${this.teamNumber + 1} команда не проигрывает в ${this.seqCount} матчах`;
     }
     get seqCountTrigger() {
-        return config.watchTeamUnbeatenSeries;
+        return this.config.teamUnbeatenSeries;
     }
-    static getSwitchableGameConditionResult(game) {
+    getSwitchableGameConditionResult(game) {
         let result = super.getSwitchableGameConditionResult(game);
         return result === 0 ? 1 : result;
     }
@@ -16,19 +15,19 @@ class BaseTeamUnbeatenSeriesChecker extends BaseTeamTotalSeriesChecker {
 
 
 class Team1UnbeatenSeriesChecker extends BaseTeamUnbeatenSeriesChecker {
-    static get teamNumber() {
+    get teamNumber() {
         return 0;
     }
-    static getComparedTotalValue(game) {
+    getComparedTotalValue(game) {
         return game.getTeamScore(1);
     }
 }
 
 class Team2UnbeatenSeriesChecker extends BaseTeamUnbeatenSeriesChecker {
-    static get teamNumber() {
+    get teamNumber() {
         return 1;
     }
-    static getComparedTotalValue(game) {
+    getComparedTotalValue(game) {
         return game.getTeamScore(0);
     }
 }

@@ -1,45 +1,44 @@
 const {BaseTeamTotalSeriesChecker} = require("./baseSeriesChecking");
-const config = require("../config.js").common;
 const {COMPARISON_TYPE} = require("./baseSeriesChecking");
 
 class BaseTeamScoreLessThanChecker extends BaseTeamTotalSeriesChecker {
-    static getComparedTotalValue() {
-        return config.watchTeamTotalSeqLessThan;
+    getComparedTotalValue() {
+        return this.config.teamTotalLessThan;
     }
-    static get totalValueComparisonOperatorType() {
+    get totalValueComparisonOperatorType() {
         return COMPARISON_TYPE.LESS;
     }
 }
 
 class BaseTeamScoreGreaterThanChecker extends BaseTeamTotalSeriesChecker {
-    static getComparedTotalValue() {
-        return config.watchTeamTotalSeqGreaterThan;
+    getComparedTotalValue() {
+        return this.config.teamTotalGreaterThan;
     }
-    static get totalValueComparisonOperatorType() {
+    get totalValueComparisonOperatorType() {
         return COMPARISON_TYPE.GREATER;
     }
 }
 
 class Team1ScoreLessThanChecker extends BaseTeamScoreLessThanChecker {
-    static get teamNumber() {
+    get teamNumber() {
         return 0;
     }
 }
 
 class Team2ScoreLessThanChecker extends BaseTeamScoreLessThanChecker {
-    static get teamNumber() {
+    get teamNumber() {
         return 1;
     }
 }
 
 class Team1ScoreGreaterThanChecker extends BaseTeamScoreGreaterThanChecker {
-    static get teamNumber() {
+    get teamNumber() {
         return 0;
     }
 }
 
 class Team2ScoreGreaterThanChecker extends BaseTeamScoreGreaterThanChecker {
-    static get teamNumber() {
+    get teamNumber() {
         return 1;
     }
 }

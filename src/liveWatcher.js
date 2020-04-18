@@ -4,6 +4,8 @@ require("colors");
 const {parameters} = require("./config.js");
 const {sportConfigByID} = require("./config");
 const fileTools = require('./fileTools.js');
+const {Team2FirstGoalSeriesChecker} = require("./seriesChecking/FirstGoalSeriesChecker");
+const {Team1FirstGoalSeriesChecker} = require("./seriesChecking/FirstGoalSeriesChecker");
 const {Team2UnbeatenSeriesChecker} = require("./seriesChecking/teamUnbeatenSeriesChecker");
 const {Team1UnbeatenSeriesChecker} = require("./seriesChecking/teamUnbeatenSeriesChecker");
 const {Team1WinChecker} = require("./seriesChecking/teamWinSeriesChecker");
@@ -35,6 +37,8 @@ const seriesCheckerClasses = [
     Team2UnbeatenSeriesChecker,
     TotalGreaterThanChecker,
     TotalLessThanChecker,
+    Team1FirstGoalSeriesChecker,
+    Team2FirstGoalSeriesChecker,
 ];
 
 function checkSeriesAndNotify (games, checkerClasses = seriesCheckerClasses) {

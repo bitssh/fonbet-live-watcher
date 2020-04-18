@@ -41,6 +41,9 @@ exports.common = {
     // Если до 200 секунды сумма голов 8 - прислать уведомление
     totalCount: 9,
     totalCountToSec: 1,
+
+    // серия первого гола
+    teamFirstGoalSeries: 3,
 };
 
 exports.parameters = {

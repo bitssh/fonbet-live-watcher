@@ -84,6 +84,13 @@ class BaseEachGameSeriesChecker extends BaseGameSeriesChecker {
         }
         return count;
     }
+    get teamNumber() {
+        this.throwMethodNotImplementedError();
+        return 0;
+    }
+    get teamName() {
+        return this.lastGame.getTeamName(this.teamNumber);
+    }
 }
 
 class BaseEachNewGameSeriesChecker extends BaseEachGameSeriesChecker {
@@ -92,7 +99,7 @@ class BaseEachNewGameSeriesChecker extends BaseEachGameSeriesChecker {
         if (!this.lastGame.isNew()) {
             return;
         }
-        return super.checkCondition(this.games);
+        return super.checkCondition();
     }
 }
 
@@ -135,12 +142,6 @@ class BaseTotalSeriesChecker extends BaseEachNewGameSeriesChecker {
 }
 
 class BaseTeamTotalSeriesChecker extends BaseTotalSeriesChecker {
-    get teamNumber() {
-        this.throwMethodNotImplementedError();
-    }
-    get teamName() {
-        return this.lastGame.getTeamName(this.teamNumber);
-    }
     get seqCountTrigger() {
         return this.config.teamTotalSeries;
     }

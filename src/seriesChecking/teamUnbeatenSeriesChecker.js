@@ -2,7 +2,7 @@ const {BaseTeamTotalSeriesChecker} = require("./baseSeriesChecking");
 
 class BaseTeamUnbeatenSeriesChecker extends BaseTeamTotalSeriesChecker {
     get notificationText() {
-        return `${this.teamNumber + 1} команда не проигрывает в ${this.seqCount} матчах`;
+        return `${this.teamName} не проигрывают в ${this.seqCount} матчах`;
     }
     get seqCountTrigger() {
         return this.config.teamUnbeatenSeries;

@@ -34,7 +34,7 @@ describe("Team1WinChecker", () => {
     });
     it("добавили 6ю победу, есть оповещение", () => {
         gameTester.push({scores: ['5:4']});
-        gameTester.assertNotificationText('1 команда - победная серия 6 матчей');
+        gameTester.assertNotificationText('Красные - победная серия 6 матчей');
     });
 
 
@@ -60,7 +60,7 @@ describe("Team2WinChecker", () => {
         gameTester.assertSeqCountEquals(11);
     });
     it("проверка текста оповещения", () => {
-        gameTester.assertNotificationText('2 команда - победная серия 11 матчей');
+        gameTester.assertNotificationText('Зеленые - победная серия 11 матчей');
     });
     it('оборвали серию в конце', () => {
         gameTester.push({scores: ['6:8']});

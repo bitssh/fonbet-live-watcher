@@ -33,7 +33,7 @@ describe("Team1ScoreLessThanChecker", () => {
     });
     it("проверка текста оповещения", () => {
         customConfig.teamTotalSeries = 4;
-        gameTester.assertNotificationText('1 команда - тотал меньше 3.5 в 4 матчах подряд');
+        gameTester.assertNotificationText('Красные - тотал меньше 3.5 в 4 матчах подряд');
     });
     it("в следующей игре тотал больше 3.5 - результат 0", () => {
         gameTester.push({scores: ['4:4']});
@@ -73,7 +73,7 @@ describe("Team2ScoreGreaterThanChecker", () => {
     });
     it("проверка текста оповещения", () => {
         customConfig.teamTotalSeries = 3;
-        gameTester.assertNotificationText('2 команда - тотал больше 6.5 в 3 матчах подряд');
+        gameTester.assertNotificationText('Зеленые - тотал больше 6.5 в 3 матчах подряд');
     });
     it("в следующей игре тотал меньше 6.5 - результат 0", () => {
         gameTester.push({scores: ['3:6']});

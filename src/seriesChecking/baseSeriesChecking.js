@@ -138,11 +138,14 @@ class BaseTeamTotalSeriesChecker extends BaseTotalSeriesChecker {
     get teamNumber() {
         this.throwMethodNotImplementedError();
     }
+    get teamName() {
+        return this.lastGame.getTeamName(this.teamNumber);
+    }
     get seqCountTrigger() {
         return this.config.teamTotalSeries;
     }
     get notificationText() {
-        return `${this.teamNumber + 1} команда - ${super.notificationText}`;
+        return `${this.teamName} - ${super.notificationText}`;
     }
     getCurrentTotal(game) {
         return game.getTeamScore(this.teamNumber);

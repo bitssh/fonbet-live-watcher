@@ -17,6 +17,8 @@ class GameTester {
         result.scores = game.scores;
         result.eventName = game.eventName;
         result.timerSeconds = game.timerSeconds;
+        result.event.team1 = 'Красные';
+        result.event.team2 = 'Зеленые';
         return result;
     }
     calcSeqCount() {

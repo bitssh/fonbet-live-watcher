@@ -34,7 +34,7 @@ describe("Team1UnbeatenSeriesChecker", () => {
     });
     it("добавили 6ю победу, есть оповещение", () => {
         gameTester.push({scores: ['5:4']});
-        gameTester.assertNotificationText('1 команда не проигрывает в 7 матчах');
+        gameTester.assertNotificationText('Красные не проигрывают в 7 матчах');
     });
     it("добавили проигрыш, оборвали серию", () => {
         gameTester.push({scores: ['1:4']});
@@ -63,7 +63,7 @@ describe("Team2UnbeatenSeriesChecker", () => {
         gameTester.assertSeqCountEquals(11);
     });
     it("проверка текста оповещения", () => {
-        gameTester.assertNotificationText('2 команда не проигрывает в 11 матчах');
+        gameTester.assertNotificationText('Зеленые не проигрывают в 11 матчах');
     });
     it('оборвали серию в конце', () => {
         gameTester.push({scores: ['6:8']});

@@ -33,6 +33,11 @@ class Game {
     get sportName() {
         return sportConfigByID[this.sportId].label;
     }
+
+    getTeamName(number) {
+       return number === 0 ? this.event.team1 : this.event.team2;
+    }
+
     get timerUpdate() {
         return !this.miscs.timerUpdateTimestamp
             ? ''

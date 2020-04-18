@@ -1,7 +1,16 @@
 exports.common = {
+
     // Подсчёт одинаковых серий голов
     scoreSeries: 6,
     scoreSeriesValues: ['1:1', '0:2', '0:3', '0:4', '2:2', '1:3'],
+
+    // Подсчёт одинаковых серий голов
+    scoreSeries2: 2,
+    scoreSeriesValues2: ['3:0', '4:0'],
+
+    // Подсчёт одинаковых серий голов
+    scoreSeries3: 6,
+    scoreSeriesValues3: [],
 
     // Подсчёт игр без голов после определённой секунды
     noGoalsSeries: 6,

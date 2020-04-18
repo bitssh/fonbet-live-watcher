@@ -79,6 +79,13 @@ describe("sendNotifications.notifyAboutScoreSeq", function () {
         assert.equal(notifications.length, 1);
         assert.deepEqual(notifications[0].seqCount, {count: 3, score: '5:5'});
     });
+    it("задали подсерию - получили 2 оповещения", () => {
+        notifications = [];
+        football.scoreSeriesValues2 = ['5:5'];
+        checkSeriesAndNotify(gameTester.cachedGames.games);
+        assert.equal(notifications.length, 2);
+        football.scoreSeriesValues2 = [];
+    });
     it("добавили матч - 4 серии", () => {
         notifications = [];
         gameTester.push({scores: ['5:5']});

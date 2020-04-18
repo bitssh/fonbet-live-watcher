@@ -15,7 +15,7 @@ const {LastGameTotalChecker} = require("./seriesChecking/LastGameTotalChecker");
 const {Team2WinChecker} = require("./seriesChecking/teamWinSeriesChecker");
 const {getLastLine} = require("./fileTools");
 const {TotalGreaterThanChecker, TotalLessThanChecker} = require("./seriesChecking/totalSeriesCheckers");
-const {SameScoreChecker} = require("./seriesChecking/SameScoreChecker");
+const {SameScoreChecker, SameScoreChecker2, SameScoreChecker3} = require("./seriesChecking/SameScoreChecker");
 const {NoGoalSeriesChecker, GoalSeriesChecker} = require("./seriesChecking/goalSeriesCheckers");
 
 const seriesCheckerClasses = [
@@ -23,6 +23,8 @@ const seriesCheckerClasses = [
     GoalSeriesChecker,
     LastGameTotalChecker,
     SameScoreChecker,
+    SameScoreChecker2,
+    SameScoreChecker3,
     Team1ScoreGreaterThanChecker,
     Team2ScoreGreaterThanChecker,
     Team1ScoreLessThanChecker,

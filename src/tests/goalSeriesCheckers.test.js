@@ -16,9 +16,6 @@ describe("NoGoalSeriesChecker", function () {
         football.noGoalsSeries = 3;
         football.noGoalsFromSec = 250;
     });
-    it("нет игр - 0 игр без голов", () => {
-        gameTester.assertSeqCountEquals(0);
-    });
     it("две игры без голов", () => {
         gameTester.push({scores: ['4:4'], timerSeconds: 100});
         gameTester.push({scores: ['0:0', '4:4'], timerSeconds: 200});
@@ -52,9 +49,6 @@ describe("GoalSeriesChecker", function () {
     before(() => {
         football.goalsSeries = 3;
         football.goalsFromSec = 250;
-    });
-    it("нет игр - 0 игр с голами", () => {
-        gameTester.assertSeqCountEquals(0);
     });
     it("две игры с голами", () => {
 

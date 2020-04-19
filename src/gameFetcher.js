@@ -3,30 +3,41 @@ const GameMap = require("./game").GameMap;
 const {parameters} = require("./config.js");
 const fetch = require('node-fetch');
 const {sportConfigByID} = require("./config");
+const _ = require('lodash');
+
+const fonbetDomainUrl = 'https://www.fonbet.ru';
 
 exports.gameFetcher = {
-    subDomains: ['line11', 'line12', 'line16', 'line31'],
     lastPacketVersion: 0,
     sportsIDs: new Set,
     cachedGames: new GameMap(),
 
-    async fetchUpdates() {
-        let url = (() => {
-            let result;
-            if (parameters.useDummyUrl) {
-                result = this.lastPacketVersion
-                    ? `./../response-test/updatesFromVersion-${this.lastPacketVersion}.json`
-                    : './../response-test/currentLine.json';
-            } else {
-                const subDomain = this.subDomains[Math.floor(Math.random() * this.subDomains.length)];
-                result = this.lastPacketVersion
-                    ? `https://${subDomain}.bkfon-resource.ru/live/updatesFromVersion/${this.lastPacketVersion}/ru/`
-                    : `https://${subDomain}.bkfon-resource.ru/live/currentLine/ru`;
-            }
-            return result;
-        })();
 
+    async getRandomLineApiUrl() {
+        if (_.isEmpty(this.apiUrls)) {
+            const response = await fetch(`${fonbetDomainUrl}/urls.json`);
+            let {line: apiUrls} = await response.json();
+            this.apiUrls = apiUrls.map(url => `https:${url}`);
+        }
+        return _.sample(this.apiUrls);
+    },
+    async getUrl() {
+        let result;
+        if (parameters.useDummyUrl) {
+            result = this.lastPacketVersion
+                ? `./../response-test/updatesFromVersion-${this.lastPacketVersion}.json`
+                : './../response-test/currentLine.json';
+        } else {
+            const apiUrl = await this.getRandomLineApiUrl();
+            result = this.lastPacketVersion
+                ? `${apiUrl}/live/updatesFromVersion/${this.lastPacketVersion}/ru/`
+                : `${apiUrl}/live/currentLine/ru`;
+        }
+        return result;
+    },
+    async fetchUpdates() {
         let responseData;
+        const url = await this.getUrl();
         if (parameters.useDummyUrl) {
             responseData = require(url);
         } else {

@@ -6,7 +6,8 @@
   },
   "dependencies": {
     "colors": "^1.4.0",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "lodash": "latest"
   },
   "devDependencies": {
     "mocha": "^6.2.2",

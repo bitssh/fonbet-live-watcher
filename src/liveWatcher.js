@@ -2,6 +2,7 @@
 // https://www.fonbet.ru/#!/live/rocket-league
 require("colors");
 const {parameters} = require("./config.js");
+const config = require("./config.js");
 const {sportConfigByID} = require("./config");
 const fileTools = require('./fileTools.js');
 const {Team2FirstGoalSeriesChecker} = require("./seriesChecking/FirstGoalSeriesChecker");
@@ -55,6 +56,9 @@ exports.liveWatcher = {
     gameFetcher: require("./gameFetcher").gameFetcher,
 
     initialize() {
+        console.log(config.sportConfigByID, config.parameters);
+
+
         for (let sportName of ['Футбол', 'Хоккей', 'Баскетбол']) {
             getLastLine(this.getCSVFilename(sportName), 1)
                 .then((lastLine) => {

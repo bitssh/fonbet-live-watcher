@@ -58,13 +58,6 @@ class BaseEachGameSeriesChecker extends BaseGameSeriesChecker {
         super(games);
     }
 
-    initLastGame () {
-        this._lastGame = this.games.pop();
-    }
-
-    get lastGame() {
-        return this._lastGame;
-    }
     checkGameCondition() {
         return false;
     }
@@ -102,12 +95,21 @@ class BaseEachGameSeriesChecker extends BaseGameSeriesChecker {
 
 class BaseEachNewGameSeriesChecker extends BaseEachGameSeriesChecker {
 
+    get lastGame() {
+        return this._lastGame;
+    }
+
+    initLastGame () {
+        this._lastGame = this.games.pop();
+    }
+
     checkCondition() {
         if (!this.lastGame.isNew()) {
             return;
         }
         return super.checkCondition();
     }
+
 }
 
 class BaseLastGameChecker extends BaseEachGameSeriesChecker {

@@ -22,22 +22,21 @@ exports.gameFetcher = {
         return _.sample(this.apiUrls);
     },
     async getUrl() {
-        let result;
-        if (parameters.useDummyUrl) {
-            result = this.lastPacketVersion
-                ? `./../response-test/updatesFromVersion-${this.lastPacketVersion}.json`
-                : './../response-test/currentLine.json';
-        } else {
-            const apiUrl = await this.getRandomLineApiUrl();
-            result = this.lastPacketVersion
-                ? `${apiUrl}/live/updatesFromVersion/${this.lastPacketVersion}/ru/`
-                : `${apiUrl}/live/currentLine/ru`;
-        }
-        return result;
+        const apiUrl = await this.getRandomLineApiUrl();
+        return this.lastPacketVersion
+            ? `${apiUrl}/live/updatesFromVersion/${this.lastPacketVersion}/ru/`
+            : `${apiUrl}/live/currentLine/ru`;
     },
     async fetchUpdates() {
         let responseData;
-        const url = await this.getUrl();
+        let url;
+        if (parameters.useDummyUrl) {
+            url = this.lastPacketVersion
+                ? `./../response-test/updatesFromVersion-${this.lastPacketVersion}.json`
+                : './../response-test/currentLine.json';
+        } else {
+            url = await this.getUrl();
+        }
         if (parameters.useDummyUrl) {
             responseData = require(url);
         } else {

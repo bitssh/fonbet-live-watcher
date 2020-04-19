@@ -47,7 +47,7 @@ describe("Team2UnbeatenSeriesChecker", () => {
 
     const gameTester = new GameTester(Team2UnbeatenSeriesChecker);
 
-    it("7 серий побед", () => {
+    it("11 серий побед", () => {
         gameTester.push({scores: ['7:1']});
         gameTester.push({scores: ['3:5']});
         gameTester.push({scores: ['0:1']});

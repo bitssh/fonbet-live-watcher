@@ -7,6 +7,11 @@ class BaseTeamWinChecker extends BaseTeamTotalSeriesChecker {
     get seqCountTrigger() {
         return this.config.teamWinSeries;
     }
+
+    getSwitchableGameConditionResult(game) {
+        let result = super.getSwitchableGameConditionResult(game);
+        return result === 0 ? -1 : result;
+    }
 }
 
 class Team1WinChecker extends BaseTeamWinChecker {

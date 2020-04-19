@@ -34,15 +34,17 @@ describe("sendNotification", function () {
         const gameTester = new GameTester(LastGameTotalChecker);
 
         gameTester.push({
-            scores: ['6:2'],
-            timerSeconds: 190,
+            scores: ['1:2'],
+            timerSeconds: 49,
             sportId: hockey.sportId,
             eventName: 'Красные - зеленые'
         });
+        hockey.totalCount = 3;
+        hockey.totalCountToSec = 50;
         let checker = gameTester.createChecker();
         assert.equal(checker.checkCondition(), true);
         checker.sendNotification();
-        assert.equal(sentText, 'Хоккей - до 200 секунды сумма голов 8, Красные - зеленые');
+        assert.equal(sentText, 'Хоккей - до 50 секунды сумма голов 3, Красные - зеленые');
     });
 });
 

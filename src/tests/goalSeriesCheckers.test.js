@@ -1,7 +1,7 @@
 const {describe, it, before, after} = require("mocha");
 const {liveWatcher} = require("../liveWatcher.js");
 const assert = require("assert");
-const {customConfig} = require("../config");
+const {football} = require("../config");
 const {GameTester} = require("./testTools.js");
 const {NoGoalSeriesChecker, GoalSeriesChecker} = require("../seriesChecking/goalSeriesCheckers");
 const {BaseGameSeriesChecker} = require("../seriesChecking/baseSeriesChecking");
@@ -13,8 +13,8 @@ describe("NoGoalSeriesChecker", function () {
     const gameTester = new GameTester(NoGoalSeriesChecker);
 
     before(() => {
-        customConfig.noGoalsSeries = 3;
-        customConfig.noGoalsFromSec = 250;
+        football.noGoalsSeries = 3;
+        football.noGoalsFromSec = 250;
     });
     it("нет игр - 0 игр без голов", () => {
         gameTester.assertSeqCountEquals(0);
@@ -50,8 +50,8 @@ describe("GoalSeriesChecker", function () {
     const gameTester = new GameTester(GoalSeriesChecker);
 
     before(() => {
-        customConfig.goalsSeries = 3;
-        customConfig.goalsFromSec = 250;
+        football.goalsSeries = 3;
+        football.goalsFromSec = 250;
     });
     it("нет игр - 0 игр с голами", () => {
         gameTester.assertSeqCountEquals(0);
@@ -86,14 +86,14 @@ describe("GoalSeriesChecker", function () {
 
 describe("sendNotifications.notifyAboutNoGoals", function () {
     cachedGames.clear();
-    const noGoalGame = {timerSeconds: 1, isNew: () => false};
-    const goalGame = {timerSeconds: 270, isNew: () => false};
-    const newGame = {scores: ['0:0'], isNew: () => true};
+    const noGoalGame = {timerSeconds: 1, isNew: () => false, sportId: football.sportId};
+    const goalGame = {timerSeconds: 270, isNew: () => false, sportId: football.sportId};
+    const newGame = {scores: ['0:0'], isNew: () => true, sportId: football.sportId};
     let notifications = [];
     let sendNotificationFuncBackup;
     before(() => {
-        customConfig.noGoalsSeries = 3;
-        customConfig.noGoalsFromSec = 270;
+        football.noGoalsSeries = 3;
+        football.noGoalsFromSec = 270;
 
         sendNotificationFuncBackup = BaseGameSeriesChecker.prototype.sendNotification;
         BaseGameSeriesChecker.prototype.sendNotification = function () {

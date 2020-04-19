@@ -1,18 +1,21 @@
-const {customConfig} = require("../config");
 const {sportConfigByID} = require("../config");
 const {sendNotification} = require("../notifying");
 
 class BaseGameSeriesChecker {
     constructor(games) {
         this.games = games.slice();
+        this.initLastGame();
 
         if (this.lastGame) {
             this.config = sportConfigByID[this.lastGame.sportId];
-        }
-        if (!this.config) {
-            this.config = customConfig;
+        } else {
+            console.warn(`lastGame is not defined for ${this.constructor.name}`);
         }
     }
+
+    initLastGame () {
+    }
+
     get seqCount() {
         if (!this._seqCount) {
             this._seqCount = this.calcSeqCount(this.games);
@@ -53,8 +56,12 @@ class BaseEachGameSeriesChecker extends BaseGameSeriesChecker {
 
     constructor(games) {
         super(games);
+    }
+
+    initLastGame () {
         this._lastGame = this.games.pop();
     }
+
     get lastGame() {
         return this._lastGame;
     }

@@ -1,11 +1,11 @@
 const {describe, it} = require("mocha");
-const {customConfig} = require("../config");
+const {football} = require("../config");
 const {GameTester} = require("./testTools.js");
 const {TotalGreaterThanChecker, TotalLessThanChecker} = require("../seriesChecking/totalSeriesCheckers");
 
-customConfig.totalSeries = 6;
-customConfig.totalLessThan = 7.5;
-customConfig.totalGreaterThan = 7.5;
+football.totalSeries = 6;
+football.totalLessThan = 7.5;
+football.totalGreaterThan = 7.5;
 
 describe("TotalGreaterThanChecker", function () {
     const gameTester = new GameTester(TotalGreaterThanChecker);
@@ -42,7 +42,7 @@ describe("TotalGreaterThanChecker", function () {
         gameTester.assertNotificationText('');
     });
     it("проверка текста оповещения", () => {
-        customConfig.totalSeries = 4;
+        football.totalSeries = 4;
         gameTester.assertNotificationText('тотал больше 7.5 в 5 матчах подряд');
     });
     it("в следующей игре тотал меньше 7.5 - результат 0", () => {

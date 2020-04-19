@@ -1,9 +1,9 @@
 const {describe, it} = require("mocha");
-const {customConfig} = require("../config");
+const {football} = require("../config");
 const {GameTester} = require("./testTools.js");
 const {Team1UnbeatenSeriesChecker, Team2UnbeatenSeriesChecker} = require("../seriesChecking/teamUnbeatenSeriesChecker");
 
-customConfig.teamUnbeatenSeries = 7;
+football.teamUnbeatenSeries = 7;
 
 describe("Team1UnbeatenSeriesChecker", () => {
 

@@ -1,10 +1,10 @@
 const {Team2FirstGoalSeriesChecker} = require("../seriesChecking/FirstGoalSeriesChecker");
 const {Team1FirstGoalSeriesChecker} = require("../seriesChecking/FirstGoalSeriesChecker");
 const {describe, it} = require("mocha");
-const {customConfig} = require("../config");
+const {football} = require("../config");
 const {GameTester} = require("./testTools.js");
 
-customConfig.teamFirstGoalSeries = 4;
+football.teamFirstGoalSeries = 4;
 
 describe("Team2FirstGoalSeriesChecker", () => {
 
@@ -35,7 +35,7 @@ describe("Team2FirstGoalSeriesChecker", () => {
         gameTester.assertNotificationText('Зеленые - первый гол в 4 матчах');
     });
     it("увеличили число в конфиге - оповещений нет", () => {
-        customConfig.teamFirstGoalSeries = 5;
+        football.teamFirstGoalSeries = 5;
         gameTester.assertNotificationText('');
     });
     it("5 серий, но не первый гол - оповещений нет", () => {
@@ -48,7 +48,7 @@ describe("Team2FirstGoalSeriesChecker", () => {
 describe("Team1FirstGoalSeriesChecker", () => {
 
     const gameTester = new GameTester(Team1FirstGoalSeriesChecker);
-    customConfig.teamFirstGoalSeries = 4;
+    football.teamFirstGoalSeries = 4;
 
     it("несколько игр, серия из 1 матча", () => {
         gameTester.push({scores: ['0:1', '0:2', '1:2']});
@@ -67,7 +67,7 @@ describe("Team1FirstGoalSeriesChecker", () => {
         gameTester.assertSeqCountEquals(0);
     });
     it("4 серии - есть оповещение", () => {
-        customConfig.teamFirstGoalSeries = 4;
+        football.teamFirstGoalSeries = 4;
         gameTester.push({scores: ['1:0', '0:2', '1:2']});
         gameTester.push({scores: ['1:0', '0:2', '1:2']});
         gameTester.push({scores: ['1:0', '0:2', '1:2']});

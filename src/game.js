@@ -67,7 +67,18 @@ class Game {
         return score.split(':').map(item => Number(item));
     }
     addScore(score) {
-        this.scores.push(this.parseScore(score));
+        const parsedScore = this.parseScore(score);
+        const newTotal = parsedScore[0] + parsedScore[1];
+        let currentTotal = this.total;
+        if (isNaN(currentTotal)) currentTotal = -1;
+        const currentLength = this.scores.length;
+        const newLength = currentLength + newTotal - currentTotal;
+        if (newLength <= currentLength) {
+            this.scores.length = newLength;
+            console.warn(`Обновление истории голов матча ${this.eventName}`);
+        }
+        this.scores[newLength - 1] = parsedScore;
+
     }
     /**
      *

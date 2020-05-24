@@ -11,13 +11,13 @@ class FirstGoalSeriesChecker extends BaseEachGameSeriesChecker {
     }
 
     checkCondition() {
-        if (this.lastGame.score !== this.watchingScore) {
+        if (this.lastGame.scoreStr !== this.watchingScore) {
             return;
         }
         return super.checkCondition();
     }
     checkGameCondition(game) {
-        return game.scores.includes(this.watchingScore);
+        return game.hasScore(this.watchingScore, false);
     }
 
     get notificationText() {

@@ -158,7 +158,7 @@ class BaseTeamTotalSeriesChecker extends BaseTotalSeriesChecker {
         return `${this.teamName} - ${super.notificationText}`;
     }
     getCurrentTotal(game) {
-        return game.getTeamScore(this.teamNumber);
+        return game.score[this.teamNumber];
     }
 }
 

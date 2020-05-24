@@ -14,7 +14,9 @@ class GameTester {
     push(game) {
         const result = this.cachedGames.newGame(this.cachedGames.size);
         result.sportId = game.sportId || football.sportId;
-        result.scores = game.scores;
+        game.scores.forEach((scoreStr) => {
+            result.addScore(scoreStr);
+        });
         result.eventName = game.eventName;
         result.timerSeconds = game.timerSeconds;
         result.event.team1 = 'Красные';

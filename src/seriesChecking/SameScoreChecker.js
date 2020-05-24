@@ -16,26 +16,31 @@ class SameScoreChecker extends BaseGameSeriesChecker {
     }
 
     get notificationText() {
-        return `серия из ${this.seqCount.count} матчей ${this.seqCount.score}`;
+        return `серия из ${this.seqCount.count} матчей ${this.seqCount.scoreStr}`;
     }
+    /**
+     *
+     * @param {Game[]}games
+     * @returns {{score: *, count: number}}
+     */
     calcSeqCount(games) {
         let count = 1;
-        let score;
-        if (games.length && games[games.length - 1].score) {
-            score = games[games.length - 1].score;
-            if (hasScore(this.checkingScoreValues, score)) {
+        let scoreStr;
+        if (games.length && games[games.length - 1].scoreStr) {
+            scoreStr = games[games.length - 1].scoreStr;
+            if (hasScore(this.checkingScoreValues, scoreStr)) {
                 for (let i = games.length - 2; i >= 0; i -= 1) {
                     const game = games[i];
                     if (!game.score)
                         break;
-                    if (!hasScore(game.scores, score)) {
+                    if (!game.hasScore(scoreStr)) {
                         break;
                     }
                     count += 1;
                 }
             }
         }
-        return {count, score};
+        return {count, scoreStr};
     }
 
     checkCondition () {

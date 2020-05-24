@@ -88,9 +88,9 @@ exports.gameFetcher = {
             let miscs = responseData.eventMiscs.filter(miscs => cachedGame.event.id === miscs.id)[0];
             if (miscs !== undefined) {
                 const score = `${miscs.score1}:${miscs.score2}`;
-                if (cachedGame.score !== score) {
+                if (cachedGame.scoreStr !== score) {
                     cachedGame.miscs = miscs;
-                    cachedGame.scores.push(score);
+                    cachedGame.addScore(score);
                     result.add(cachedGame);
                 }
             }

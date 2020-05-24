@@ -16,17 +16,17 @@ describe("LastGameTotalChecker", function () {
         gameTester.assertSeqCountEquals(0);
     });
     it("первый гол", () => {
-        game.scores.push('0:1');
+        game.addScore('0:1');
         game.timerSeconds = 10;
         gameTester.assertSeqCountEquals(0);
     });
     it("тотал = 7 до 200 секунды", () => {
-        game.scores.push('6:1');
+        game.addScore('6:1');
         game.timerSeconds = 190;
         gameTester.assertSeqCountEquals(0);
     });
     it("тотал = 8 до 200 секунды, триггер срабатывает", () => {
-        game.scores.push('6:2');
+        game.addScore('6:2');
         game.timerSeconds = 190;
         gameTester.assertSeqCountEquals(1);
     });

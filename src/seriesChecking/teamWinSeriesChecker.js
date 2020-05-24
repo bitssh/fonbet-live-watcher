@@ -19,7 +19,7 @@ class Team1WinChecker extends BaseTeamWinChecker {
         return 0;
     }
     getComparedTotalValue(game) {
-        return game.getTeamScore(1);
+        return game.score[1];
     }
 }
 
@@ -28,7 +28,7 @@ class Team2WinChecker extends BaseTeamWinChecker {
         return 1;
     }
     getComparedTotalValue(game) {
-        return game.getTeamScore(0);
+        return game.score[0];
     }
 }
 

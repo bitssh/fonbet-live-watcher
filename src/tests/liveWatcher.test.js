@@ -12,7 +12,7 @@ it("getAndCheckUpdates - граббинг тестовых данных", functi
     liveWatcher.getAndCheckUpdates();
     liveWatcher.getAndCheckUpdates();
     liveWatcher.getAndCheckUpdates();
-    assert.equal(cachedGames.get(16156082).score, '3:0');
+    assert.equal(cachedGames.get(16156082).scoreStr, '3:0');
     assert.equal(cachedGames.get(16156082).miscs.timerSeconds, 129);
 });
 

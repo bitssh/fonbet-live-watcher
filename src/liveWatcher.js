@@ -82,7 +82,7 @@ exports.liveWatcher = {
             this.gameFetcher.shrinkCache();
         }
         for (let game of fetchedGames) {
-            if (!game.score) {
+            if (!game.scoreStr) {
                 console.error(`score is null for game ${game.event.id}`.red);
                 return;
             }
@@ -95,7 +95,7 @@ exports.liveWatcher = {
         }
     },
     appendToFile(game) {
-        let csvRow = [game.now, game.event.name.replace('Матч', 'Match'), "'" + game.score, game.timerSeconds];
+        let csvRow = [game.now, game.event.name.replace('Матч', 'Match'), "'" + game.scoreStr, game.timerSeconds];
         let lastLine = this.lastCSVLine[game.sportName];
         if (!lastLine || !(csvRow[1] === lastLine[1] && csvRow[2] === lastLine[2])) {
             this.lastCSVLine[game.sportName] = null;
@@ -109,7 +109,7 @@ exports.liveWatcher = {
         const sportName = game.sportName.padEnd(10, ' ');
 
         let logStr = `${game.now} ${sportName} `
-            + `${game.event.id}  ${game.eventName} <${game.score}> ${timerSeconds} ${game.timerUpdate} `;
+            + `${game.event.id}  ${game.eventName} <${game.scoreStr}> ${timerSeconds} ${game.timerUpdate} `;
 
         const colorName = sportConfigByID[game.sportId].color;
         logStr = logStr[colorName];
